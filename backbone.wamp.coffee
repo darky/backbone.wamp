@@ -5,10 +5,13 @@ do (
         backbone_ajax_original = Backbone.ajax
 
         Backbone.ajax = (ajax_options)->
-            if ajax_options.wamp
-                "TODO"
-            else
-                backbone_ajax_original ajax_options
+            switch true
+                when ajax_options.wamp_model
+                    "TODO"
+                when ajax_options.wamp_collection
+                    "TODO"
+                else
+                    backbone_ajax_original ajax_options
 
 
 
@@ -16,7 +19,7 @@ do (
 
             sync : (method, model, options = {})->
                 super method, model,
-                    _.extend options, wamp : true
+                    _.extend options, wamp_model : true
 
 
 
@@ -24,9 +27,9 @@ do (
 
             model : WAMP_Model
 
-            sync  : (method, model, options = {})->
-                super method, model,
-                    _.extend options, wamp : true
+            sync  : (method, collection, options = {})->
+                super method, collection,
+                    _.extend options, wamp_collection : true
 
 
 
