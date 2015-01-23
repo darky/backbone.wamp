@@ -15,13 +15,13 @@
       paths: {
         'jquery': 'vendor/jquery',
         'underscore': 'vendor/underscore',
-        'backbone': '../backbone'
+        'backbone': 'vendor/backbone'
       }
     });
 
     var root = this;
 
-    require(['backbone'], function(Backbone) {
+    require(['../backbone.wamp'], function(Backbone) {
       require([
         'environment',
         'noconflict',

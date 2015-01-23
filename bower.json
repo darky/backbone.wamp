@@ -18,11 +18,12 @@
     "autobahnjs"
   ],
   "dependencies": {
-    "backbone"         : "1.1.2",
-    "chai"             : "1.10.0",
-    "jquery"           : "1.11.2",
-    "mocha"            : "2.1.0",
-    "underscore"       : "1.7.0"
+    "autobahn"   : "0.9.5",
+    "backbone"   : "1.1.2",
+    "chai"       : "1.10.0",
+    "jquery"     : "1.11.2",
+    "mocha"      : "2.1.0",
+    "underscore" : "1.7.0"
   },
   "license": "MIT"
 }
