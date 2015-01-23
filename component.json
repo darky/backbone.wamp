@@ -1,0 +1,15 @@
+{
+  "name"          : "backbone.wamp",
+  "version"       : "0.0.1",
+  "description"   : "WAMP protocol for Backbone Models and Collections",
+  "keywords"      : [
+    "backbone",
+    "wamp",
+    "websocket",
+    "autobahnjs"
+  ],
+  "repo"          : "darrrk/backbone.wamp",
+  "main"          : "backbone.wamp.js",
+  "scripts"       : ["backbone.wamp.js"],
+  "license"       : "MIT"
+}
