@@ -2,16 +2,16 @@
 
   var a, b, c, d, e, col, otherCol;
 
-  module("Backbone.Collection", {
+  module("Backbone.WAMP_Collection", {
 
     setup: function() {
-      a         = new Backbone.Model({id: 3, label: 'a'});
-      b         = new Backbone.Model({id: 2, label: 'b'});
-      c         = new Backbone.Model({id: 1, label: 'c'});
-      d         = new Backbone.Model({id: 0, label: 'd'});
+      a         = new Backbone.WAMP_Model({id: 3, label: 'a'});
+      b         = new Backbone.WAMP_Model({id: 2, label: 'b'});
+      c         = new Backbone.WAMP_Model({id: 1, label: 'c'});
+      d         = new Backbone.WAMP_Model({id: 0, label: 'd'});
       e         = null;
-      col       = new Backbone.Collection([a,b,c,d]);
-      otherCol  = new Backbone.Collection();
+      col       = new Backbone.WAMP_Collection([a,b,c,d]);
+      otherCol  = new Backbone.WAMP_Collection();
     }
 
   });
@@ -37,7 +37,7 @@
   });
 
   test("String comparator.", 1, function() {
-    var collection = new Backbone.Collection([
+    var collection = new Backbone.WAMP_Collection([
       {id: 3},
       {id: 1},
       {id: 2}
@@ -46,7 +46,7 @@
   });
 
   test("new and parse", 3, function() {
-    var Collection = Backbone.Collection.extend({
+    var Collection = Backbone.WAMP_Collection.extend({
       parse : function(data) {
         return _.filter(data, function(datum) {
           return datum.a % 2 === 0;
@@ -70,8 +70,8 @@
   });
 
   test("get with non-default ids", 5, function() {
-    var col = new Backbone.Collection();
-    var MongoModel = Backbone.Model.extend({idAttribute: '_id'});
+    var col = new Backbone.WAMP_Collection();
+    var MongoModel = Backbone.WAMP_Model.extend({idAttribute: '_id'});
     var model = new MongoModel({_id: 100});
     col.add(model);
     equal(col.get(100), model);
@@ -79,19 +79,19 @@
     equal(col.get(model), model);
     equal(col.get(101), void 0);
 
-    var col2 = new Backbone.Collection();
+    var col2 = new Backbone.WAMP_Collection();
     col2.model = MongoModel;
     col2.add(model.attributes);
     equal(col2.get(model.clone()), col2.first());
   });
 
   test('get with "undefined" id', function() {
-    var collection = new Backbone.Collection([{id: 1}, {id: 'undefined'}]);
+    var collection = new Backbone.WAMP_Collection([{id: 1}, {id: 'undefined'}]);
     equal(collection.get(1).id, 1);
   }),
 
   test("update index when id changes", 4, function() {
-    var col = new Backbone.Collection();
+    var col = new Backbone.WAMP_Collection();
     col.add([
       {id : 0, name : 'one'},
       {id : 1, name : 'two'}
@@ -115,7 +115,7 @@
   test("add", 14, function() {
     var added, opts, secondAdded;
     added = opts = secondAdded = null;
-    e = new Backbone.Model({id: 10, label : 'e'});
+    e = new Backbone.WAMP_Model({id: 10, label : 'e'});
     otherCol.add(e);
     otherCol.on('add', function() {
       secondAdded = true;
@@ -132,17 +132,17 @@
     equal(secondAdded, null);
     ok(opts.amazing);
 
-    var f = new Backbone.Model({id: 20, label : 'f'});
-    var g = new Backbone.Model({id: 21, label : 'g'});
-    var h = new Backbone.Model({id: 22, label : 'h'});
-    var atCol = new Backbone.Collection([f, g, h]);
+    var f = new Backbone.WAMP_Model({id: 20, label : 'f'});
+    var g = new Backbone.WAMP_Model({id: 21, label : 'g'});
+    var h = new Backbone.WAMP_Model({id: 22, label : 'h'});
+    var atCol = new Backbone.WAMP_Collection([f, g, h]);
     equal(atCol.length, 3);
     atCol.add(e, {at: 1});
     equal(atCol.length, 4);
     equal(atCol.at(1), e);
     equal(atCol.last(), h);
 
-    var coll = new Backbone.Collection(new Array(2));
+    var coll = new Backbone.WAMP_Collection(new Array(2));
     var addCount = 0;
     coll.on('add', function(){
         addCount += 1;
@@ -156,7 +156,7 @@
   });
 
   test("add multiple models", 6, function() {
-    var col = new Backbone.Collection([{at: 0}, {at: 1}, {at: 9}]);
+    var col = new Backbone.WAMP_Collection([{at: 0}, {at: 1}, {at: 9}]);
     col.add([{at: 2}, {at: 3}, {at: 4}, {at: 5}, {at: 6}, {at: 7}, {at: 8}], {at: 2});
     for (var i = 0; i <= 5; i++) {
       equal(col.at(i).get('at'), i);
@@ -164,32 +164,32 @@
   });
 
   test("add; at should have preference over comparator", 1, function() {
-    var Col = Backbone.Collection.extend({
+    var Col = Backbone.WAMP_Collection.extend({
       comparator: function(a,b) {
         return a.id > b.id ? -1 : 1;
       }
     });
 
     var col = new Col([{id: 2}, {id: 3}]);
-    col.add(new Backbone.Model({id: 1}), {at:   1});
+    col.add(new Backbone.WAMP_Model({id: 1}), {at:   1});
 
     equal(col.pluck('id').join(' '), '3 1 2');
   });
 
   test("can't add model to collection twice", function() {
-    var col = new Backbone.Collection([{id: 1}, {id: 2}, {id: 1}, {id: 2}, {id: 3}]);
+    var col = new Backbone.WAMP_Collection([{id: 1}, {id: 2}, {id: 1}, {id: 2}, {id: 3}]);
     equal(col.pluck('id').join(' '), '1 2 3');
   });
 
   test("can't add different model with same id to collection twice", 1, function() {
-    var col = new Backbone.Collection;
+    var col = new Backbone.WAMP_Collection;
     col.unshift({id: 101});
     col.add({id: 101});
     equal(col.length, 1);
   });
 
   test("merge in duplicate models with {merge: true}", 3, function() {
-    var col = new Backbone.Collection;
+    var col = new Backbone.WAMP_Collection;
     col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
     col.add({id: 1, name: 'Moses'});
     equal(col.first().get('name'), 'Moe');
@@ -201,7 +201,7 @@
 
   test("add model to multiple collections", 10, function() {
     var counter = 0;
-    var e = new Backbone.Model({id: 10, label : 'e'});
+    var e = new Backbone.WAMP_Model({id: 10, label : 'e'});
     e.on('add', function(model, collection) {
       counter++;
       equal(e, model);
@@ -211,12 +211,12 @@
         equal(collection, colE);
       }
     });
-    var colE = new Backbone.Collection([]);
+    var colE = new Backbone.WAMP_Collection([]);
     colE.on('add', function(model, collection) {
       equal(e, model);
       equal(colE, collection);
     });
-    var colF = new Backbone.Collection([]);
+    var colF = new Backbone.WAMP_Collection([]);
     colF.on('add', function(model, collection) {
       equal(e, model);
       equal(colF, collection);
@@ -228,21 +228,21 @@
   });
 
   test("add model with parse", 1, function() {
-    var Model = Backbone.Model.extend({
+    var Model = Backbone.WAMP_Model.extend({
       parse: function(obj) {
         obj.value += 1;
         return obj;
       }
     });
 
-    var Col = Backbone.Collection.extend({model: Model});
+    var Col = Backbone.WAMP_Collection.extend({model: Model});
     var col = new Col;
     col.add({value: 1}, {parse: true});
     equal(col.at(0).get('value'), 2);
   });
 
   test("add with parse and merge", function() {
-    var collection = new Backbone.Collection();
+    var collection = new Backbone.WAMP_Collection();
     collection.parse = function(attrs) {
       return _.map(attrs, function(model) {
         if (model.model) return model.model;
@@ -255,13 +255,13 @@
   });
 
   test("add model to collection with sort()-style comparator", 3, function() {
-    var col = new Backbone.Collection;
+    var col = new Backbone.WAMP_Collection;
     col.comparator = function(a, b) {
       return a.get('name') < b.get('name') ? -1 : 1;
     };
-    var tom = new Backbone.Model({name: 'Tom'});
-    var rob = new Backbone.Model({name: 'Rob'});
-    var tim = new Backbone.Model({name: 'Tim'});
+    var tom = new Backbone.WAMP_Model({name: 'Tom'});
+    var rob = new Backbone.WAMP_Model({name: 'Rob'});
+    var tim = new Backbone.WAMP_Model({name: 'Tim'});
     col.add(tom);
     col.add(rob);
     col.add(tim);
@@ -271,7 +271,7 @@
   });
 
   test("comparator that depends on `this`", 2, function() {
-    var col = new Backbone.Collection;
+    var col = new Backbone.WAMP_Collection;
     col.negative = function(num) {
       return -num;
     };
@@ -305,17 +305,17 @@
   });
 
   test("add and remove return values", 13, function() {
-    var Even = Backbone.Model.extend({
+    var Even = Backbone.WAMP_Model.extend({
       validate: function(attrs) {
         if (attrs.id % 2 !== 0) return "odd";
       }
     });
-    var col = new Backbone.Collection;
+    var col = new Backbone.WAMP_Collection;
     col.model = Even;
 
     var list = col.add([{id: 2}, {id: 4}], {validate: true});
     equal(list.length, 2);
-    ok(list[0] instanceof Backbone.Model);
+    ok(list[0] instanceof Backbone.WAMP_Model);
     equal(list[1], col.last());
     equal(list[1].get('id'), 4);
 
@@ -338,13 +338,13 @@
   });
 
   test("shift and pop", 2, function() {
-    var col = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
+    var col = new Backbone.WAMP_Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
     equal(col.shift().get('a'), 'a');
     equal(col.pop().get('c'), 'c');
   });
 
   test("slice", 2, function() {
-    var col = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
+    var col = new Backbone.WAMP_Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
     var array = col.slice(1, 3);
     equal(array.length, 2);
     equal(array[0].get('b'), 'b');
@@ -352,8 +352,8 @@
 
   test("events are unbound on remove", 3, function() {
     var counter = 0;
-    var dj = new Backbone.Model();
-    var emcees = new Backbone.Collection([dj]);
+    var dj = new Backbone.WAMP_Model();
+    var emcees = new Backbone.WAMP_Collection([dj]);
     emcees.on('change', function(){ counter++; });
     dj.set({name : 'Kool'});
     equal(counter, 1);
@@ -369,13 +369,13 @@
       title : 'Othello'
     };
     var passed = false;
-    var e = new Backbone.Model(modelData);
-    var f = new Backbone.Model(modelData);
+    var e = new Backbone.WAMP_Model(modelData);
+    var f = new Backbone.WAMP_Model(modelData);
     f.on('remove', function() {
       passed = true;
     });
-    var colE = new Backbone.Collection([e]);
-    var colF = new Backbone.Collection([f]);
+    var colE = new Backbone.WAMP_Collection([e]);
+    var colF = new Backbone.WAMP_Collection([f]);
     ok(e != f);
     ok(colE.length === 1);
     ok(colF.length === 1);
@@ -389,7 +389,7 @@
 
   test("remove same model in multiple collection", 16, function() {
     var counter = 0;
-    var e = new Backbone.Model({id: 5, title: 'Othello'});
+    var e = new Backbone.WAMP_Model({id: 5, title: 'Othello'});
     e.on('remove', function(model, collection) {
       counter++;
       equal(e, model);
@@ -399,12 +399,12 @@
         equal(collection, colF);
       }
     });
-    var colE = new Backbone.Collection([e]);
+    var colE = new Backbone.WAMP_Collection([e]);
     colE.on('remove', function(model, collection) {
       equal(e, model);
       equal(colE, collection);
     });
-    var colF = new Backbone.Collection([e]);
+    var colF = new Backbone.WAMP_Collection([e]);
     colF.on('remove', function(model, collection) {
       equal(e, model);
       equal(colF, collection);
@@ -422,10 +422,10 @@
   });
 
   test("model destroy removes from all collections", 3, function() {
-    var e = new Backbone.Model({id: 5, title: 'Othello'});
+    var e = new Backbone.WAMP_Model({id: 5, title: 'Othello'});
     e.sync = function(method, model, options) { options.success(); };
-    var colE = new Backbone.Collection([e]);
-    var colF = new Backbone.Collection([e]);
+    var colE = new Backbone.WAMP_Collection([e]);
+    var colF = new Backbone.WAMP_Collection([e]);
     e.destroy();
     ok(colE.length === 0);
     ok(colF.length === 0);
@@ -433,10 +433,10 @@
   });
 
   test("Colllection: non-persisted model destroy removes from all collections", 3, function() {
-    var e = new Backbone.Model({title: 'Othello'});
+    var e = new Backbone.WAMP_Model({title: 'Othello'});
     e.sync = function(method, model, options) { throw "should not be called"; };
-    var colE = new Backbone.Collection([e]);
-    var colF = new Backbone.Collection([e]);
+    var colE = new Backbone.WAMP_Collection([e]);
+    var colF = new Backbone.WAMP_Collection([e]);
     e.destroy();
     ok(colE.length === 0);
     ok(colF.length === 0);
@@ -444,7 +444,7 @@
   });
 
   test("fetch", 4, function() {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.WAMP_Collection;
     collection.url = '/test';
     collection.fetch();
     equal(this.syncArgs.method, 'read');
@@ -456,7 +456,7 @@
   });
 
   test("fetch with an error response triggers an error event", 1, function () {
-    var collection = new Backbone.Collection();
+    var collection = new Backbone.WAMP_Collection();
     collection.on('error', function () {
       ok(true);
     });
@@ -465,7 +465,7 @@
   });
 
   test("ensure fetch only parses once", 1, function() {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.WAMP_Collection;
     var counter = 0;
     collection.parse = function(models) {
       counter++;
@@ -478,7 +478,7 @@
   });
 
   test("create", 4, function() {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.WAMP_Collection;
     collection.url = '/test';
     var model = collection.create({label: 'f'}, {wait: true});
     equal(this.syncArgs.method, 'create');
@@ -488,12 +488,12 @@
   });
 
   test("create with validate:true enforces validation", 3, function() {
-    var ValidatingModel = Backbone.Model.extend({
+    var ValidatingModel = Backbone.WAMP_Model.extend({
       validate: function(attrs) {
         return "fail";
       }
     });
-    var ValidatingCollection = Backbone.Collection.extend({
+    var ValidatingCollection = Backbone.WAMP_Collection.extend({
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
@@ -505,12 +505,12 @@
   });
 
   test("a failing create returns model with errors", function() {
-    var ValidatingModel = Backbone.Model.extend({
+    var ValidatingModel = Backbone.WAMP_Model.extend({
       validate: function(attrs) {
         return "fail";
       }
     });
-    var ValidatingCollection = Backbone.Collection.extend({
+    var ValidatingCollection = Backbone.WAMP_Collection.extend({
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
@@ -520,7 +520,7 @@
   });
 
   test("initialize", 1, function() {
-    var Collection = Backbone.Collection.extend({
+    var Collection = Backbone.WAMP_Collection.extend({
       initialize: function() {
         this.one = 1;
       }
@@ -534,8 +534,8 @@
   });
 
   test("where and findWhere", 8, function() {
-    var model = new Backbone.Model({a: 1});
-    var coll = new Backbone.Collection([
+    var model = new Backbone.WAMP_Model({a: 1});
+    var coll = new Backbone.WAMP_Collection([
       model,
       {a: 1},
       {a: 1, b: 2},
@@ -597,7 +597,7 @@
     equal(col.length, 0);
     equal(resetCount, 4);
 
-    var f = new Backbone.Model({id: 20, label : 'f'});
+    var f = new Backbone.WAMP_Model({id: 20, label : 'f'});
     col.reset([undefined, f]);
     equal(col.length, 2);
     equal(resetCount, 5);
@@ -608,25 +608,25 @@
   });
 
   test ("reset with different values", function(){
-    var col = new Backbone.Collection({id: 1});
+    var col = new Backbone.WAMP_Collection({id: 1});
     col.reset({id: 1, a: 1});
     equal(col.get(1).get('a'), 1);
   });
 
   test("same references in reset", function() {
-    var model = new Backbone.Model({id: 1});
-    var collection = new Backbone.Collection({id: 1});
+    var model = new Backbone.WAMP_Model({id: 1});
+    var collection = new Backbone.WAMP_Collection({id: 1});
     collection.reset(model);
     equal(collection.get(1), model);
   });
 
   test("reset passes caller options", 3, function() {
-    var Model = Backbone.Model.extend({
+    var Model = Backbone.WAMP_Model.extend({
       initialize: function(attrs, options) {
         this.model_parameter = options.model_parameter;
       }
     });
-    var col = new (Backbone.Collection.extend({ model: Model }))();
+    var col = new (Backbone.WAMP_Collection.extend({ model: Model }))();
     col.reset([{ astring: "green", anumber: 1 }, { astring: "blue", anumber: 2 }], { model_parameter: 'model parameter' });
     equal(col.length, 2);
     col.each(function(model) {
@@ -644,15 +644,15 @@
   test("add does not alter arguments", 2, function(){
     var attrs = {};
     var models = [attrs];
-    new Backbone.Collection().add(models);
+    new Backbone.WAMP_Collection().add(models);
     equal(models.length, 1);
     ok(attrs === models[0]);
   });
 
   test("#714: access `model.collection` in a brand new model.", 2, function() {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.WAMP_Collection;
     collection.url = '/test';
-    var Model = Backbone.Model.extend({
+    var Model = Backbone.WAMP_Model.extend({
       set: function(attrs) {
         equal(attrs.prop, 'value');
         equal(this.collection, collection);
@@ -664,7 +664,7 @@
   });
 
   test("#574, remove its own reference to the .models array.", 2, function() {
-    var col = new Backbone.Collection([
+    var col = new Backbone.WAMP_Collection([
       {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}
     ]);
     equal(col.length, 6);
@@ -673,13 +673,13 @@
   });
 
   test("#861, adding models to a collection which do not pass validation, with validate:true", function() {
-      var Model = Backbone.Model.extend({
+      var Model = Backbone.WAMP_Model.extend({
         validate: function(attrs) {
           if (attrs.id == 3) return "id can't be 3";
         }
       });
 
-      var Collection = Backbone.Collection.extend({
+      var Collection = Backbone.WAMP_Collection.extend({
         model: Model
       });
 
@@ -691,9 +691,9 @@
   });
 
   test("Invalid models are discarded with validate:true.", 5, function() {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.WAMP_Collection;
     collection.on('test', function() { ok(true); });
-    collection.model = Backbone.Model.extend({
+    collection.model = Backbone.WAMP_Model.extend({
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
     var model = new collection.model({id: 1, valid: true});
@@ -706,8 +706,8 @@
   });
 
   test("multiple copies of the same model", 3, function() {
-    var col = new Backbone.Collection();
-    var model = new Backbone.Model();
+    var col = new Backbone.WAMP_Collection();
+    var model = new Backbone.WAMP_Model();
     col.add([model, model]);
     equal(col.length, 1);
     col.add([{id: 1}, {id: 1}]);
@@ -716,21 +716,21 @@
   });
 
   test("#964 - collection.get return inconsistent", 2, function() {
-    var c = new Backbone.Collection();
+    var c = new Backbone.WAMP_Collection();
     ok(c.get(null) === undefined);
     ok(c.get() === undefined);
   });
 
   test("#1112 - passing options.model sets collection.model", 2, function() {
-    var Model = Backbone.Model.extend({});
-    var c = new Backbone.Collection([{id: 1}], {model: Model});
+    var Model = Backbone.WAMP_Model.extend({});
+    var c = new Backbone.WAMP_Collection([{id: 1}], {model: Model});
     ok(c.model === Model);
     ok(c.at(0) instanceof Model);
   });
 
   test("null and undefined are invalid ids.", 2, function() {
-    var model = new Backbone.Model({id: 1});
-    var collection = new Backbone.Collection([model]);
+    var model = new Backbone.WAMP_Model({id: 1});
+    var collection = new Backbone.WAMP_Collection([model]);
     model.set({id: null});
     ok(!collection.get('null'));
     model.set({id: 1});
@@ -739,7 +739,7 @@
   });
 
   test("falsy comparator", 4, function(){
-    var Col = Backbone.Collection.extend({
+    var Col = Backbone.WAMP_Collection.extend({
       comparator: function(model){ return model.id; }
     });
     var col = new Col();
@@ -753,8 +753,8 @@
   });
 
   test("#1355 - `options` is passed to success callbacks", 2, function(){
-    var m = new Backbone.Model({x:1});
-    var col = new Backbone.Collection();
+    var m = new Backbone.WAMP_Model({x:1});
+    var col = new Backbone.WAMP_Collection();
     var opts = {
       success: function(collection, resp, options){
         ok(options);
@@ -768,7 +768,7 @@
   });
 
   test("#1412 - Trigger 'request' and 'sync' events.", 4, function() {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.WAMP_Collection;
     collection.url = '/test';
     Backbone.ajax = function(settings){ settings.success(); };
 
@@ -792,15 +792,15 @@
   });
 
   test("#1447 - create with wait adds model.", 1, function() {
-    var collection = new Backbone.Collection;
-    var model = new Backbone.Model;
+    var collection = new Backbone.WAMP_Collection;
+    var model = new Backbone.WAMP_Model;
     model.sync = function(method, model, options){ options.success(); };
     collection.on('add', function(){ ok(true); });
     collection.create(model, {wait: true});
   });
 
   test("#1448 - add sorts collection after merge.", 1, function() {
-    var collection = new Backbone.Collection([
+    var collection = new Backbone.WAMP_Collection([
       {id: 1, x: 1},
       {id: 2, x: 2}
     ]);
@@ -810,7 +810,7 @@
   });
 
   test("#1655 - groupBy can be used with a string argument.", 3, function() {
-    var collection = new Backbone.Collection([{x: 1}, {x: 2}]);
+    var collection = new Backbone.WAMP_Collection([{x: 1}, {x: 2}]);
     var grouped = collection.groupBy('x');
     strictEqual(_.keys(grouped).length, 2);
     strictEqual(grouped[1][0].get('x'), 1);
@@ -818,7 +818,7 @@
   });
 
   test("#1655 - sortBy can be used with a string argument.", 1, function() {
-    var collection = new Backbone.Collection([{x: 3}, {x: 1}, {x: 2}]);
+    var collection = new Backbone.WAMP_Collection([{x: 3}, {x: 1}, {x: 2}]);
     var values = _.map(collection.sortBy('x'), function(model) {
       return model.get('x');
     });
@@ -826,7 +826,7 @@
   });
 
   test("#1604 - Removal during iteration.", 0, function() {
-    var collection = new Backbone.Collection([{}, {}]);
+    var collection = new Backbone.WAMP_Collection([{}, {}]);
     collection.on('add', function() {
       collection.at(0).destroy();
     });
@@ -834,7 +834,7 @@
   });
 
   test("#1638 - `sort` during `add` triggers correctly.", function() {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.WAMP_Collection;
     collection.comparator = function(model) { return model.get('x'); };
     var added = [];
     collection.on('add', function(model) {
@@ -848,9 +848,9 @@
 
   test("fetch parses models by default", 1, function() {
     var model = {};
-    var Collection = Backbone.Collection.extend({
+    var Collection = Backbone.WAMP_Collection.extend({
       url: 'test',
-      model: Backbone.Model.extend({
+      model: Backbone.WAMP_Model.extend({
         parse: function(resp) {
           strictEqual(resp, model);
         }
@@ -861,7 +861,7 @@
   });
 
   test("`sort` shouldn't always fire on `add`", 1, function() {
-    var c = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
+    var c = new Backbone.WAMP_Collection([{id: 1}, {id: 2}, {id: 3}], {
       comparator: 'id'
     });
     c.sort = function(){ ok(true); };
@@ -875,8 +875,8 @@
     var model = {
       namespace : [{id: 1}, {id:2}]
     };
-    var Collection = Backbone.Collection.extend({
-      model: Backbone.Model.extend({
+    var Collection = Backbone.WAMP_Collection.extend({
+      model: Backbone.WAMP_Model.extend({
         parse: function(model) {
           model.name = 'test';
           return model;
@@ -896,8 +896,8 @@
     var model = {
       namespace : [{id: 1}, {id:2}]
     };
-    var Collection = Backbone.Collection.extend({
-      model: Backbone.Model.extend({
+    var Collection = Backbone.WAMP_Collection.extend({
+      model: Backbone.WAMP_Model.extend({
         parse: function(model) {
           model.name = 'test';
           return model;
@@ -916,8 +916,8 @@
 
 
   test("Reset includes previous models in triggered event.", 1, function() {
-    var model = new Backbone.Model();
-    var collection = new Backbone.Collection([model])
+    var model = new Backbone.WAMP_Model();
+    var collection = new Backbone.WAMP_Collection([model])
     .on('reset', function(collection, options) {
       deepEqual(options.previousModels, [model]);
     });
@@ -925,10 +925,10 @@
   });
 
   test("set", function() {
-    var m1 = new Backbone.Model();
-    var m2 = new Backbone.Model({id: 2});
-    var m3 = new Backbone.Model();
-    var c = new Backbone.Collection([m1, m2]);
+    var m1 = new Backbone.WAMP_Model();
+    var m2 = new Backbone.WAMP_Model({id: 2});
+    var m3 = new Backbone.WAMP_Model();
+    var c = new Backbone.WAMP_Collection([m1, m2]);
 
     // Test add/change/remove events
     c.on('add', function(model) {
@@ -972,9 +972,9 @@
   });
 
   test("set with only cids", 3, function() {
-    var m1 = new Backbone.Model;
-    var m2 = new Backbone.Model;
-    var c = new Backbone.Collection;
+    var m1 = new Backbone.WAMP_Model;
+    var m2 = new Backbone.WAMP_Model;
+    var c = new Backbone.WAMP_Collection;
     c.set([m1, m2]);
     equal(c.length, 2);
     c.set([m1]);
@@ -986,8 +986,8 @@
   test("set with only idAttribute", 3, function() {
     var m1 = { _id: 1 };
     var m2 = { _id: 2 };
-    var col = Backbone.Collection.extend({
-      model: Backbone.Model.extend({
+    var col = Backbone.WAMP_Collection.extend({
+      model: Backbone.WAMP_Model.extend({
         idAttribute: '_id'
       })
     });
@@ -1001,13 +1001,13 @@
   });
 
   test("set + merge with default values defined", function() {
-    var Model = Backbone.Model.extend({
+    var Model = Backbone.WAMP_Model.extend({
       defaults: {
         key: 'value'
       }
     });
     var m = new Model({id: 1});
-    var col = new Backbone.Collection([m], {model: Model});
+    var col = new Backbone.WAMP_Collection([m], {model: Model});
     equal(col.first().get('key'), 'value');
 
     col.set({id: 1, key: 'other'});
@@ -1019,14 +1019,14 @@
   });
 
   test('merge without mutation', function () {
-    var Model = Backbone.Model.extend({
+    var Model = Backbone.WAMP_Model.extend({
       initialize: function (attrs, options) {
         if (attrs.child) {
           this.set('child', new Model(attrs.child, options), options);
         }
       }
     });
-    var Collection = Backbone.Collection.extend({model: Model});
+    var Collection = Backbone.WAMP_Collection.extend({model: Model});
     var data = [{id: 1, child: {id: 2}}];
     var collection = new Collection(data);
     equal(collection.first().id, 1);
@@ -1037,8 +1037,8 @@
   });
 
   test("`set` and model level `parse`", function() {
-    var Model = Backbone.Model.extend({});
-    var Collection = Backbone.Collection.extend({
+    var Model = Backbone.WAMP_Model.extend({});
+    var Collection = Backbone.WAMP_Collection.extend({
       model: Model,
       parse: function (res) { return _.pluck(res.models, 'model'); }
     });
@@ -1052,8 +1052,8 @@
   });
 
   test("`set` data is only parsed once", function() {
-    var collection = new Backbone.Collection();
-    collection.model = Backbone.Model.extend({
+    var collection = new Backbone.WAMP_Collection();
+    collection.model = Backbone.WAMP_Model.extend({
       parse: function (data) {
         equal(data.parsed, void 0);
         data.parsed = true;
@@ -1064,10 +1064,10 @@
   });
 
   test('`set` matches input order in the absence of a comparator', function () {
-    var one = new Backbone.Model({id: 1});
-    var two = new Backbone.Model({id: 2});
-    var three = new Backbone.Model({id: 3});
-    var collection = new Backbone.Collection([one, two, three]);
+    var one = new Backbone.WAMP_Model({id: 1});
+    var two = new Backbone.WAMP_Model({id: 2});
+    var three = new Backbone.WAMP_Model({id: 3});
+    var collection = new Backbone.WAMP_Collection([one, two, three]);
     collection.set([{id: 3}, {id: 2}, {id: 1}]);
     deepEqual(collection.models, [three, two, one]);
     collection.set([{id: 1}, {id: 2}]);
@@ -1083,7 +1083,7 @@
   });
 
   test("#1894 - Push should not trigger a sort", 0, function() {
-    var Collection = Backbone.Collection.extend({
+    var Collection = Backbone.WAMP_Collection.extend({
       comparator: 'id',
       sort: function() {
         ok(false);
@@ -1093,15 +1093,15 @@
   });
 
   test("#2428 - push duplicate models, return the correct one", 1, function() {
-    var col = new Backbone.Collection;
+    var col = new Backbone.WAMP_Collection;
     var model1 = col.push({id: 101});
     var model2 = col.push({id: 101})
     ok(model2.cid == model1.cid);
   });
 
   test("`set` with non-normal id", function() {
-    var Collection = Backbone.Collection.extend({
-      model: Backbone.Model.extend({idAttribute: '_id'})
+    var Collection = Backbone.WAMP_Collection.extend({
+      model: Backbone.WAMP_Model.extend({idAttribute: '_id'})
     });
     var collection = new Collection({_id: 1});
     collection.set([{_id: 1, a: 1}], {add: false});
@@ -1109,7 +1109,7 @@
   });
 
   test("#1894 - `sort` can optionally be turned off", 0, function() {
-    var Collection = Backbone.Collection.extend({
+    var Collection = Backbone.WAMP_Collection.extend({
       comparator: 'id',
       sort: function() { ok(true); }
     });
@@ -1117,7 +1117,7 @@
   });
 
   test("#1915 - `parse` data in the right order in `set`", function() {
-    var collection = new (Backbone.Collection.extend({
+    var collection = new (Backbone.WAMP_Collection.extend({
       parse: function (data) {
         strictEqual(data.status, 'ok');
         return data.data;
@@ -1128,7 +1128,7 @@
   });
 
   asyncTest("#1939 - `parse` is passed `options`", 1, function () {
-    var collection = new (Backbone.Collection.extend({
+    var collection = new (Backbone.WAMP_Collection.extend({
       url: '/',
       parse: function (data, options) {
         strictEqual(options.xhr.someHeader, 'headerValue');
@@ -1147,7 +1147,7 @@
   });
 
   test("`add` only `sort`s when necessary", 2, function () {
-    var collection = new (Backbone.Collection.extend({
+    var collection = new (Backbone.WAMP_Collection.extend({
       comparator: 'a'
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
@@ -1160,7 +1160,7 @@
   });
 
   test("`add` only `sort`s when necessary with comparator function", 3, function () {
-    var collection = new (Backbone.Collection.extend({
+    var collection = new (Backbone.WAMP_Collection.extend({
       comparator: function(a, b) {
         return a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
       }
@@ -1175,10 +1175,10 @@
   });
 
   test("Attach options to collection.", 2, function() {
-    var model = new Backbone.Model;
+    var model = new Backbone.WAMP_Model;
     var comparator = function(){};
 
-    var collection = new Backbone.Collection([], {
+    var collection = new Backbone.WAMP_Collection([], {
       model: model,
       comparator: comparator
     });
@@ -1188,7 +1188,7 @@
   });
 
   test("`add` overrides `set` flags", function () {
-    var collection = new Backbone.Collection();
+    var collection = new Backbone.WAMP_Collection();
     collection.once('add', function (model, collection, options) {
       collection.add({id: 2}, options);
     });
@@ -1197,7 +1197,7 @@
   });
 
   test("#2606 - Collection#create, success arguments", 1, function() {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.WAMP_Collection;
     collection.url = 'test';
     collection.create({}, {
       success: function(model, resp, options) {
@@ -1209,10 +1209,10 @@
 
   test("#2612 - nested `parse` works with `Collection#set`", function() {
 
-    var Job = Backbone.Model.extend({
+    var Job = Backbone.WAMP_Model.extend({
       constructor: function() {
         this.items = new Items();
-        Backbone.Model.apply(this, arguments);
+        Backbone.WAMP_Model.apply(this, arguments);
       },
       parse: function(attrs) {
         this.items.set(attrs.items, {parse: true});
@@ -1220,10 +1220,10 @@
       }
     });
 
-    var Item = Backbone.Model.extend({
+    var Item = Backbone.WAMP_Model.extend({
       constructor: function() {
-        this.subItems = new Backbone.Collection();
-        Backbone.Model.apply(this, arguments);
+        this.subItems = new Backbone.WAMP_Collection();
+        Backbone.WAMP_Model.apply(this, arguments);
       },
       parse: function(attrs) {
         this.subItems.set(attrs.subItems, {parse: true});
@@ -1231,7 +1231,7 @@
       }
     });
 
-    var Items = Backbone.Collection.extend({
+    var Items = Backbone.WAMP_Collection.extend({
       model: Item
     });
 
@@ -1293,10 +1293,10 @@
 
     var calls = {add: 0, remove: 0};
 
-    var Collection = Backbone.Collection.extend({
+    var Collection = Backbone.WAMP_Collection.extend({
 
       _addReference: function(model) {
-        Backbone.Collection.prototype._addReference.apply(this, arguments);
+        Backbone.WAMP_Collection.prototype._addReference.apply(this, arguments);
         calls.add++;
         equal(model, this._byId[model.id]);
         equal(model, this._byId[model.cid]);
@@ -1304,7 +1304,7 @@
       },
 
       _removeReference: function(model) {
-        Backbone.Collection.prototype._removeReference.apply(this, arguments);
+        Backbone.WAMP_Collection.prototype._removeReference.apply(this, arguments);
         calls.remove++;
         equal(this._byId[model.id], void 0);
         equal(this._byId[model.cid], void 0);
@@ -1324,7 +1324,7 @@
   });
 
   test('Do not allow duplicate models to be `add`ed or `set`', function() {
-    var c = new Backbone.Collection();
+    var c = new Backbone.WAMP_Collection();
 
     c.add([{id: 1}, {id: 1}]);
     equal(c.length, 1);

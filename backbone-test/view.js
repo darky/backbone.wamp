@@ -283,8 +283,8 @@
     });
 
     var view = new View({
-      model: new Backbone.Model,
-      collection: new Backbone.Collection
+      model: new Backbone.WAMP_Model,
+      collection: new Backbone.WAMP_Collection
     });
 
     view.stopListening();
