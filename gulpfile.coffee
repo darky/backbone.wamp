@@ -4,6 +4,7 @@
 gulp = require "gulp"
 coffee = require "gulp-coffee"
 coffeelint = require "gulp-coffeelint"
+exec = require("child_process").exec
 mocha = require "gulp-mocha"
 mocha_phantomjs = require "gulp-mocha-phantomjs"
 qunit = require "gulp-qunit"
@@ -15,17 +16,15 @@ sourcemaps = require "gulp-sourcemaps"
 # ******************
 gulp.task "default", ["test", "build"]
 gulp.task "test", [
-    "test-flat"
     "test-backbone"
     "test-backbone-extend"
-    "test-own"
 ]
 gulp.task "build", ["lint", "compile"]
 
 
 # **********
 #    TEST
-# **********       
+# **********
 gulp.task "test-backbone", ->
     gulp
     .src "backbone-test/index.html"

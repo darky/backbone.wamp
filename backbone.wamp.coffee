@@ -9,7 +9,7 @@ do (
         [WAMP_Model, WAMP_Collection]
 
 ) ->
-    
+
     if typeof define is "function"  and  define.amd
         define ["underscore", "backbone", "autobahn"], (_, Backbone, autobahn)->
             [
