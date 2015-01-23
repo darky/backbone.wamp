@@ -2,9 +2,33 @@ do (
     global = @
     factory = (_, Backbone, autobahn)->
 
+        backbone_ajax_original = Backbone.ajax
+
+        Backbone.ajax = (ajax_options)->
+            if ajax_options.wamp
+                "TODO"
+            else
+                backbone_ajax_original ajax_options
+
+
+
         class WAMP_Model extends Backbone.Model
 
+            sync : (method, model, options = {})->
+                super method, model,
+                    _.extend options, wamp : true
+
+
+
         class WAMP_Collection extends Backbone.Collection
+
+            model : WAMP_Model
+
+            sync  : (method, model, options = {})->
+                super method, model,
+                    _.extend options, wamp : true
+
+
 
         [WAMP_Model, WAMP_Collection]
 
