@@ -2,6 +2,13 @@ do (
     global = @
     factory = (_, Backbone, autobahn)->
 
+        action_map =
+            "POST"   : "create"
+            "PUT"    : "update"
+            "PATCH"  : "patch"
+            "DELETE" : "delete"
+            "GET"    : "read"
+
         backbone_ajax_original = Backbone.ajax
 
         Backbone.ajax = (ajax_options)->
