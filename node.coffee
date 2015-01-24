@@ -13,7 +13,16 @@ global.WAMP_CONNECTION.onopen = ->
         
         url : "test_collection"
 
-        wamp_read : ->
+        wamp_read : (options, autobahn)->
+            {data, extra} = options
+
+            if extra.wamp_model_id
+                {id: 1, name: "John", age: 25}
+            else if extra.wamp_model_id is null
+                {id: 1, name: "John", age: 20}
+            else
+                [{a: 1, b: 2}, {c: 1, d: 2}]
+
             console.log arguments
             [{a: 1, b: 2}, {c: 1, d: 2}]
 

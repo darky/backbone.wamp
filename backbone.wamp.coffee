@@ -9,28 +9,45 @@ do (
             "DELETE" : "delete"
             "GET"    : "read"
 
+        mixin_wamp_options = (method, entity, options)->
+            _.extend options,
+                wamp            : true
+                wamp_connection : entity.wamp_connection
+                wamp_other_id   : entity.collection?.wamp_other_id or 
+                    entity.wamp_other_id
+
         backbone_ajax_original = Backbone.ajax
 
         Backbone.ajax = (ajax_options)->
-            if not ajax_options.wamp_model and not ajax_options.wamp_collection
+            unless ajax_options.wamp
                 return backbone_ajax_original ajax_options
 
             connection = ajax_options.wamp_connection or
                 global.WAMP_CONNECTION
+            uri =
+                if ajax_options.wamp_model_id
+                    ajax_options.url.replace(
+                        new RegExp "/#{ajax_options.wamp_model_id}$"
+                        ""
+                    )
+                else
+                    ajax_options.url
 
-            if ajax_options.wamp_model
-                "TODO"
-            else if ajax_options.wamp_collection
-                connection.session.call(
-                    """
-                        #{ajax_options.url}.\
-                        #{_.result ajax_options, "wamp_other_id"}.\
-                        #{action_map[ajax_options.type]}
-                    """
-                    []
-                    ajax_options.data
-                    ajax_options.wamp_options
-                ).then ajax_options.success, ajax_options.error
+            connection.session.call(
+                """
+                    #{uri}.\
+                    #{_.result ajax_options, "wamp_other_id"}.\
+                    #{action_map[ajax_options.type]}
+                """
+                []
+                data  : ajax_options.data
+                extra : _.extend(
+                    ajax_options.wamp_extra or {}
+                    wamp_model_id : ajax_options.wamp_model_id
+                )
+                ajax_options.wamp_options
+            )
+            .then ajax_options.success, ajax_options.error
 
 
 
@@ -38,10 +55,8 @@ do (
 
             sync : (method, model, options = {})->
                 super method, model,
-                    _.extend options,
-                        wamp_connection : model.wamp_connection
-                        wamp_model      : true
-                        wamp_model_id   : model.id
+                    _.extend mixin_wamp_options(arguments...),
+                        wamp_model_id : model.id or null
 
 
 
@@ -66,11 +81,8 @@ do (
             model : WAMP_Model
 
             sync  : (method, collection, options = {})->
-                super method, collection,
-                    _.extend options,
-                        wamp_collection : true
-                        wamp_connection : collection.wamp_connection
-                        wamp_other_id   : collection.wamp_other_id
+                super method, collection, mixin_wamp_options(arguments...)
+
 
 
 
