@@ -13,7 +13,7 @@ do (
             _.extend options,
                 wamp            : true
                 wamp_connection : entity.wamp_connection
-                wamp_other_id   : entity.collection?.wamp_other_id or 
+                wamp_other_id   : entity.collection?.wamp_other_id or
                     entity.wamp_other_id
 
         backbone_ajax_original = Backbone.ajax
@@ -72,8 +72,10 @@ do (
                             #{_.result @, "url"}.\
                             #{_.result @, "wamp_my_id"}.\
                             #{action}
-                        """, =>
-                            @["wamp_#{action}"] _.rest(arguments)...
+                        """, (args, kwargs, details)=>
+                            if kwargs.data
+                                kwargs.data = JSON.parse kwargs.data
+                            @["wamp_#{action}"] kwargs, details
                 )
 
                 super
