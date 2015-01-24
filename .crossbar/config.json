@@ -33,7 +33,7 @@
                "paths": {
                   "/": {
                      "type": "static",
-                     "directory": "../backbone-test"
+                     "directory": "../"
                   },
                   "ws": {
                      "type": "websocket"
