@@ -56,7 +56,7 @@ do (
             sync : (method, model, options = {})->
                 super method, model,
                     _.extend mixin_wamp_options(arguments...),
-                        wamp_model_id : model.id or null
+                        wamp_model_id : model.id
 
 
 
