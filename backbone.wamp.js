@@ -17,7 +17,9 @@
     } else {
       return _ref = factory(global._, global.Backbone, autobahn), global.Backbone.WAMP_Model = _ref[0], global.Backbone.WAMP_Collection = _ref[1], _ref;
     }
-  })(this, function(_, Backbone, autobahn) {
+  })((function() {
+    return this;
+  })(), function(global, _, Backbone, autobahn) {
     var WAMP_Collection, WAMP_Model, action_map, backbone_ajax_original;
     action_map = {
       "POST": "create",

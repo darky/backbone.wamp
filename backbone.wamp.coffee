@@ -1,6 +1,6 @@
 do (
-    global = @
-    factory = (_, Backbone, autobahn)->
+    global = do -> @
+    factory = (global, _, Backbone, autobahn)->
 
         action_map =
             "POST"   : "create"
