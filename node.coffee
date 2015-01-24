@@ -1,4 +1,5 @@
 autobahn = require "autobahn"
+_ = require "underscore"
 Backbone = require "backbone"
 [WAMP_Model, WAMP_Collection] = require "./backbone.wamp.coffee"
 
@@ -13,20 +14,38 @@ global.WAMP_CONNECTION.onopen = ->
         
         url : "test_collection"
 
-        wamp_read : (options, autobahn)->
-            {data, extra} = options
+        wamp_read : (options)->
+            {extra} = options
 
             if extra.wamp_model_id
-                {id: 1, name: "John", age: 25}
-            else if extra.wamp_model_id is null
-                {id: 1, name: "John", age: 20}
+                @get extra.wamp_model_id
+                .toJSON()
             else
-                [{a: 1, b: 2}, {c: 1, d: 2}]
+                @toJSON()
 
-            console.log arguments
-            [{a: 1, b: 2}, {c: 1, d: 2}]
+        wamp_create : (options)->
+            {data} = options
 
+            @add _.extend(data, id : parseInt _.uniqueId())
+            @last().toJSON()
 
+        wamp_update : (options)->
+            {data, extra} = options
+
+            @get extra.wamp_model_id
+            .set data
+
+        wamp_patch : (options)->
+            {data, extra} = options
+
+            @get extra.wamp_model_id
+            .set data
+
+        wamp_delete : (options)->
+            {extra} = options
+
+            @remove @get extra.wamp_model_id
+            {}
 
 
     c = new Collection()
