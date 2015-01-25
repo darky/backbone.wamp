@@ -9,6 +9,22 @@ do (
             "DELETE" : "delete"
             "GET"    : "read"
 
+        attach_handlers = ->
+            connection = @wamp_connection or global.WAMP_CONNECTION
+
+            _.each(
+                _.values action_map
+                (action)=>
+                    connection.session.register """
+                        #{_.result(@, "url") or _.result(@, "urlRoot")}.\
+                        #{_.result @, "wamp_my_id"}.\
+                        #{action}
+                    """, (args, kwargs, details)=>
+                        if kwargs.data
+                            kwargs.data = JSON.parse kwargs.data
+                        @["wamp_#{action}"] kwargs, details
+            )
+
         mixin_wamp_options = (method, entity, options)->
             _.extend options,
                 wamp            : true
@@ -53,6 +69,11 @@ do (
 
         class WAMP_Model extends Backbone.Model
 
+            constructor : (attributes, options = {})->
+                super
+                unless options.collection
+                    attach_handlers.call @
+
             sync : (method, model, options = {})->
                 super method, model,
                     _.extend mixin_wamp_options(arguments...),
@@ -63,21 +84,7 @@ do (
         class WAMP_Collection extends Backbone.Collection
 
             constructor : ->
-                connection = @wamp_connection or global.WAMP_CONNECTION
-
-                _.each(
-                    _.values action_map
-                    (action)=>
-                        connection.session.register """
-                            #{_.result @, "url"}.\
-                            #{_.result @, "wamp_my_id"}.\
-                            #{action}
-                        """, (args, kwargs, details)=>
-                            if kwargs.data
-                                kwargs.data = JSON.parse kwargs.data
-                            @["wamp_#{action}"] kwargs, details
-                )
-
+                attach_handlers.call @
                 super
 
             model : WAMP_Model

@@ -4,10 +4,46 @@ Backbone = require "backbone"
 [WAMP_Model, WAMP_Collection] = require "./backbone.wamp.coffee"
 
 global.WAMP_CONNECTION = new autobahn.Connection
-    url   : "ws://127.0.0.1:8080/ws"
+    url   : "ws://127.0.0.1:9000/ws"
     realm : "realm1"
 
 global.WAMP_CONNECTION.onopen = ->
+
+    class Model extends WAMP_Model
+        
+        wamp_my_id : "nodejs"
+
+        urlRoot : "test_model"
+
+        wamp_read : (options)->
+            @toJSON()
+
+        wamp_create : (options)->
+            {data} = options
+
+            @set _.extend(data, id : parseInt _.uniqueId())
+            @toJSON()
+
+        wamp_update : (options)->
+            {data, extra} = options
+
+            @set data
+            @toJSON()
+
+        wamp_patch : (options)->
+            {data, extra} = options
+
+            @set data
+            @toJSON()
+
+        wamp_delete : (options)->
+            {extra} = options
+
+            @set {}
+            {}
+
+
+
     class Collection extends WAMP_Collection
 
         wamp_my_id : "nodejs"
@@ -48,6 +84,7 @@ global.WAMP_CONNECTION.onopen = ->
             {}
 
 
+    m = new Model()
     c = new Collection()
 
 
