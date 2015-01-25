@@ -1,7 +1,7 @@
 # Backbone.WAMP
 
 Backbone.WAMP replace your classic **REST** protocol, based on **AJAX**, to modern **WAMP** protocol, based on **WebSockets**.
-You can read more about [here](http://wamp.ws). This allows make your *Backbone.Model* / *Backbone.Collection* with next characteristics:
+You can read more about <a href=http://wamp.ws target=_blank>here</a>. This allows make your *Backbone.Model* / *Backbone.Collection* with next characteristics:
 
 #### Peer-to-peer
 
