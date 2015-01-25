@@ -22,13 +22,13 @@ Identical *Models* / *Collections* everywhere. You can even share it between pee
 
 **UMD**. <br>
 Suitable in **Browser** / **CommonJS** / **AMD** enviroments. <br>
-Deps - *Backbone* / *Underscore* / *[AutobahnJS](http://autobahn.ws/js/index.html)*. <br>
+Deps - *Backbone* / *Underscore* / *<a href=http://autobahn.ws/js/index.html target=_blank>AutobahnJS</a>*. <br>
 I recommend to learn *AutobahnJS* before, it's not long and difficult.
 
 ## Before using
 
 Before create your first object of class, extended from *Backbone.WAMP_Model* / *Backbone.WAMP_Collection*,
-you should **initialize and establish** [AutobahnJS connection](http://autobahn.ws/js/reference.html#connections) to peer.
+you should **initialize and establish** <a href=http://autobahn.ws/js/reference.html#connections target=_blank>AutobahnJS connection</a> to peer.
 This connection need to save in global variable `WAMP_CONNECTION`. Or/and you can save particular connections in
 `wamp_connection` property of *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* extended classes,
 which will be incapsulated inside them. 
@@ -61,7 +61,7 @@ Methods `wamp_create`, e.t.c receive 2 parameters: `send_options`, `autobahn_det
 Or GET-params for *read* model/collection
 * `send_options.extra` - contain extra information, which you can send in `options.wamp_extra`<br>
 If needed, it has built-in `wamp_model_id` of specific model.
-* `autobahn_details` can contain AutobahnJS [session.call options](http://autobahn.ws/js/reference.html#call),
+* `autobahn_details` can contain AutobahnJS <a href=http://autobahn.ws/js/reference.html#call target=_blank>session.call options</a>,
 which can sended in `options.wamp_options`
 
 Methods `wamp_create`, e.t.c should do specific action in our enviroment and return Model/Collection data or Promise,
