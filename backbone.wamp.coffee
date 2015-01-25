@@ -71,12 +71,15 @@ do (
 
             constructor : (attributes, options = {})->
                 super
-                unless options.collection
+                if (
+                    not options.collection and
+                    _.result @, "urlRoot"
+                )
                     attach_handlers.call @
 
             sync : (method, model, options = {})->
                 super method, model,
-                    _.extend mixin_wamp_options(arguments...),
+                    _.extend mixin_wamp_options(method, model, options),
                         wamp_model_id : model.id
 
 
@@ -90,7 +93,8 @@ do (
             model : WAMP_Model
 
             sync  : (method, collection, options = {})->
-                super method, collection, mixin_wamp_options(arguments...)
+                super method, collection,
+                    mixin_wamp_options(method, collection, options)
 
 
 
