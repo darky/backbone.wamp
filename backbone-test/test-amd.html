@@ -24,6 +24,7 @@
 
     require(['../backbone.wamp'], function(Backbone) {
       require([
+        'autobahn',
         'environment',
         'noconflict',
         'events',
@@ -32,8 +33,13 @@
         'router',
         'view',
         'sync'
-      ], function() {
-        QUnit.start();
+      ], function(autobahn) {
+        WAMP_CONNECTION = new autobahn.Connection({
+         url   : "ws://127.0.0.1:9000/ws",
+         realm : "realm1"
+        });
+        WAMP_CONNECTION.onopen = QUnit.start;
+        WAMP_CONNECTION.open();
       });
     });
   </script>
