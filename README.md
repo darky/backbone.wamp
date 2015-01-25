@@ -60,7 +60,11 @@ Methods `wamp_create`, e.t.c receive 2 parameters: `send_options`, `autobahn_det
 * `send_options.data` contains JSON-parsed model for *create*, *update*, *patch*.
 Or GET-params for *read* model/collection
 * `send_options.extra` - contain extra information, which you can send in `options.wamp_extra`<br>
-If needed, it has built-in `wamp_model_id` of specific model.
+Built-in options in `send_options.extra`:
+
+    * `wamp_model_id` of specific model, if needed.
+    * `wamp_my_id` of another enviroment
+
 * `autobahn_details` can contain AutobahnJS <a href=http://autobahn.ws/js/reference.html#call target=_blank>session.call options</a>,
 which can sended in `options.wamp_options`
 

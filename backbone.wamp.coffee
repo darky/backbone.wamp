@@ -29,6 +29,8 @@ do (
             _.extend options,
                 wamp            : true
                 wamp_connection : entity.wamp_connection
+                wamp_my_id      : entity.collection?.wamp_my_id or
+                    entity.wamp_my_id or global.WAMP_MY_ID
                 wamp_other_id   : entity.collection?.wamp_other_id or
                     entity.wamp_other_id or global.WAMP_OTHER_ID
 
@@ -60,6 +62,7 @@ do (
                 extra : _.extend(
                     ajax_options.wamp_extra or {}
                     wamp_model_id : ajax_options.wamp_model_id
+                    wamp_my_id    : ajax_options.wamp_my_id
                 )
                 ajax_options.wamp_options
             )
