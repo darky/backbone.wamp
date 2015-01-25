@@ -19,13 +19,22 @@
   <script src="vendor/backbone.js"></script>
   <script src="vendor/autobahn.js"></script>
   <script src="../backbone.wamp.js"></script>
-  <script src="environment.js"></script>
-  <script src="noconflict.js"></script>
-  <script src="events.js"></script>
-  <script src="model.js"></script>
-  <script src="collection.js"></script>
-  <script src="router.js"></script>
-  <script src="view.js"></script>
-  <script src="sync.js"></script>
+  <script>
+    WAMP_CONNECTION = new autobahn.Connection({
+      url   : "ws://127.0.0.1:9000/ws",
+      realm : "realm1"
+    });
+    WAMP_CONNECTION.onopen = function(){
+      $.ajax("environment.js", {async : false});
+      $.ajax("noconflict.js", {async : false});
+      $.ajax("events.js", {async : false});
+      $.ajax("model.js", {async : false});
+      $.ajax("collection.js", {async : false});
+      $.ajax("router.js", {async : false});
+      $.ajax("view.js", {async : false});
+      $.ajax("sync.js", {async : false});
+    };
+    WAMP_CONNECTION.open();
+  </script>
 </body>
 </html>
