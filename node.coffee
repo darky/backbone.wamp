@@ -6,12 +6,11 @@ Backbone = require "backbone"
 global.WAMP_CONNECTION = new autobahn.Connection
     url   : "ws://127.0.0.1:9000/ws"
     realm : "realm1"
+global.WAMP_MY_ID = "nodejs"
 
 global.WAMP_CONNECTION.onopen = ->
 
     class Model extends WAMP_Model
-        
-        wamp_my_id : "nodejs"
 
         urlRoot : "test_model"
 
@@ -45,8 +44,6 @@ global.WAMP_CONNECTION.onopen = ->
 
 
     class Collection extends WAMP_Collection
-
-        wamp_my_id : "nodejs"
         
         url : "test_collection"
 

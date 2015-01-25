@@ -17,7 +17,7 @@ do (
                 (action)=>
                     connection.session.register """
                         #{_.result(@, "url") or _.result(@, "urlRoot")}.\
-                        #{_.result @, "wamp_my_id"}.\
+                        #{_.result(@, "wamp_my_id") or global.WAMP_MY_ID}.\
                         #{action}
                     """, (args, kwargs, details)=>
                         if kwargs.data
@@ -30,7 +30,7 @@ do (
                 wamp            : true
                 wamp_connection : entity.wamp_connection
                 wamp_other_id   : entity.collection?.wamp_other_id or
-                    entity.wamp_other_id
+                    entity.wamp_other_id or global.WAMP_OTHER_ID
 
         backbone_ajax_original = Backbone.ajax
 
