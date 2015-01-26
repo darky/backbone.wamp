@@ -66,7 +66,13 @@ do (
                 )
                 ajax_options.wamp_options
             )
-            .then ajax_options.success, ajax_options.error
+            .then (obj)->
+                if obj?.error
+                    ajax_options.error obj
+                else
+                    ajax_options.success obj
+            , (obj)->
+                ajax_options.error obj
 
 
 

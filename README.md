@@ -68,7 +68,9 @@ Built-in options in `send_options.extra`:
 which can sended in `options.wamp_options`
 
 Methods `wamp_create`, `wamp_read`, `wamp_update`, `wamp_delete`, `wamp_patch` should do specific action in our enviroment and return Model/Collection data or Promise,
-that resolve this data. For error you can reject returned Promise with cause.
+that resolve this data.<br>
+For error you must return `new autobahn.Error(params...)` <a href=http://autobahn.ws/js/reference.html#errors target=_blank>More info...</a><br>
+Or Promise, that **resolve** (not reject) `new autobahn.Error(params...)`
 
 ## License
 
