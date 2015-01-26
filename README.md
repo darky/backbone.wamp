@@ -27,10 +27,10 @@ I recommend to learn *AutobahnJS* before, it's not long and difficult.
 
 ## Before using
 
-Before create your first object of class, extended from *Backbone.WAMP_Model* / *Backbone.WAMP_Collection*,
+Before extend *Backbone.WAMP_Model* / *Backbone.WAMP_Collection*,
 you should **initialize and establish** <a href=http://autobahn.ws/js/reference.html#connections target=_blank>AutobahnJS connection</a> to peer.
-This connection need to save in global variable `WAMP_CONNECTION`. Or/and you can save particular connections in
-`wamp_connection` property of *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* extended classes,
+This connection need to save in global variable `WAMP_CONNECTION`. Or you can save particular connections in
+`wamp_connection` property of *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* classes,
 which will be incapsulated inside them. 
 
 ## How it works
@@ -38,24 +38,24 @@ which will be incapsulated inside them.
 ### Send WebSocket interaction
 
 1. Extend own class from *Backbone.WAMP_Model* / *Backbone.WAMP_Collection*
-2. In class set `url` for Collection or `urlRoot` for standalone Model.
-3. Set global variable `WAMP_OTHER_ID` or property/method (which should return string property)
-`wamp_other_id` for specific class. Meant unique peer id of enviroment, which you want interact.
-4. Do `fetch`, `save`, `destroy`. It generate WebSocket messages as `entity.peer_id.CRUD_action`. More info below.
+2. Set `url` for Collection or `urlRoot` for standalone Model.
+3. Set global variable `WAMP_OTHER_ID` or property/method `wamp_other_id` for specific class. Meant unique peer id of enviroment, which you want interact.
+4. Create object from class.
+5. Do `fetch`, `save`, `destroy`. It generate WebSocket messages as `entity.peer_id.CRUD_action`. More info below.
 
 ### Receive WebSocket interaction
 
-Your instances of classes, extended from *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* register 5 **CRUD** callback-methods:
+In your classes from *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* define 5 **CRUD** callback-methods:
 `wamp_create`, `wamp_read`, `wamp_update`, `wamp_delete`, `wamp_patch`,
 that called via WebSocket messages, as `entity.peer_id.CRUD_action`, where:
 
 * `entity` - `urlRoot` of *Backbone.WAMP_Model*, `url` of *Backbone.WAMP_Collection* <br>
 * `peer_id` - unique peer id of your enviroment, for example: *browser*, *nodejs*, *nodejs_2*<br>
 It sets via global `WAMP_MY_ID` variable,
-and/or `wamp_my_id` property/method of specific class.
+or `wamp_my_id` property/method of specific class.
 * `CRUD_action` - *create*, *read*, *update*, *delete*, *patch*
 
-Methods `wamp_create`, e.t.c receive 2 parameters: `send_options`, `autobahn_details`<br>
+Methods `wamp_create`, `wamp_read`, `wamp_update`, `wamp_delete`, `wamp_patch` receive 2 parameters: `send_options`, `autobahn_details`<br>
 
 * `send_options.data` contains JSON-parsed model for *create*, *update*, *patch*.
 Or GET-params for *read* model/collection
@@ -68,7 +68,7 @@ Built-in options in `send_options.extra`:
 * `autobahn_details` can contain AutobahnJS <a href=http://autobahn.ws/js/reference.html#call target=_blank>session.call options</a>,
 which can sended in `options.wamp_options`
 
-Methods `wamp_create`, e.t.c should do specific action in our enviroment and return Model/Collection data or Promise,
+Methods `wamp_create`, `wamp_read`, `wamp_update`, `wamp_delete`, `wamp_patch` should do specific action in our enviroment and return Model/Collection data or Promise,
 that resolve this data. For error you can reject returned Promise with cause.
 
 ## License
