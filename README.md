@@ -44,7 +44,7 @@ which will be incapsulated inside them.
 
 ### Receive WebSocket interaction
 
-In your classes from *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* define 5 **CRUD** callback-methods:
+In your classes from *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* you can define **CRUD** callback-methods:
 `wamp_create`, `wamp_read`, `wamp_update`, `wamp_delete`, `wamp_patch`,
 that called via WebSocket messages, as `entity.peer_id.CRUD_action`, where:
 

@@ -22,7 +22,8 @@ do (
                     """, (args, kwargs, details)=>
                         if kwargs.data
                             kwargs.data = JSON.parse kwargs.data
-                        @["wamp_#{action}"] kwargs, details
+                        @["wamp_#{action}"]?(kwargs, details) or
+                        new autobahn.Error "Not defined procedure for action: #{action}"
             )
 
         mixin_wamp_options = (method, entity, options)->
