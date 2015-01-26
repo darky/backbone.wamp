@@ -40,8 +40,7 @@ which will be incapsulated inside them.
 1. Extend own class from *Backbone.WAMP_Model* / *Backbone.WAMP_Collection*
 2. Set `url` for Collection or `urlRoot` for standalone Model.
 3. Set global variable `WAMP_OTHER_ID` or property/method `wamp_other_id` for specific class. Meant unique peer id of enviroment, which you want interact.
-4. Create object from class.
-5. Do `fetch`, `save`, `destroy`. It generate WebSocket messages as `entity.peer_id.CRUD_action`. More info below.
+4. Do `fetch`, `save`, `destroy`. It generate WebSocket messages as `entity.peer_id.CRUD_action`. More info below.
 
 ### Receive WebSocket interaction
 
