@@ -77,7 +77,7 @@ Or Promise, that **resolve** (not reject) `new autobahn.Error(params...)`
 
 (The MIT License)
 
-Copyright (c) 2014-2015 Vladislav Botvin &lt;darkvlados@gmail.com&gt;
+Copyright (c) 2015 Vladislav Botvin &lt;darkvlados@gmail.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
