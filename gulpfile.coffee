@@ -1,6 +1,7 @@
 # *****************
 #    DEFINE-VARS
 # *****************
+_ = require "underscore"
 gulp = require "gulp"
 coffee = require "gulp-coffee"
 coffeelint = require "gulp-coffeelint"
@@ -18,6 +19,7 @@ gulp.task "default", ["test", "build"]
 gulp.task "test", [
     "test-backbone"
     "test-backbone-extend"
+    "test-own"
 ]
 gulp.task "build", ["lint", "compile"]
 
@@ -41,6 +43,13 @@ gulp.task "test-backbone-extend", ["test-backbone-extend-pre"], (cb)->
         console.log stdout
         console.log stderr
         cb err
+
+gulp.task "test-own-crossbar", (cb)->
+    exec "crossbar start &"
+    _.delay cb, 10000
+
+gulp.task "test-own", ["test-own-crossbar"], (cb)->
+    cb()
 
 
 # ***********

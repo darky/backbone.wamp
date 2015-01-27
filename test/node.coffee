@@ -1,7 +1,7 @@
 autobahn = require "autobahn"
 _ = require "underscore"
 Backbone = require "backbone"
-[WAMP_Model, WAMP_Collection] = require "./backbone.wamp.coffee"
+[WAMP_Model, WAMP_Collection] = require "../backbone.wamp.coffee"
 
 global.WAMP_CONNECTION = new autobahn.Connection
     url   : "ws://127.0.0.1:9000/ws"

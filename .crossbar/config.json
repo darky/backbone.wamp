@@ -45,7 +45,7 @@
       {
          "type": "guest",
          "executable": "coffee",
-         "arguments": ["node.coffee"],
+         "arguments": ["test/node.coffee"],
          "options": {
             "workdir": "../",
             "watch": {
