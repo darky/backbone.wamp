@@ -23,7 +23,9 @@ do (
                         if kwargs.data
                             kwargs.data = JSON.parse kwargs.data
                         @["wamp_#{action}"]?(kwargs, details) or
-                        new autobahn.Error "Not defined procedure for action: #{action}"
+                        new autobahn.Error(
+                            "Not defined procedure for action: #{action}"
+                        )
             )
 
         mixin_wamp_options = (method, entity, options)->
@@ -81,24 +83,37 @@ do (
 
             constructor : (attributes, options = {})->
                 super
-                if (
-                    not options.collection and
-                    _.result @, "urlRoot"
-                )
-                    attach_handlers.call @
+                unless options.collection
+                    @wamp_attach_handlers()
+
 
             sync : (method, model, options = {})->
                 super method, model,
                     _.extend mixin_wamp_options(method, model, options),
                         wamp_model_id : model.id
 
+            wamp_attach_handlers : ->
+                if (
+                    _.result(@, "urlRoot") and
+                    (@wamp_my_id or global.WAMP_MY_ID)
+                )
+                    attach_handlers.call @
+                else
+                    console.warn "
+                        wamp_create, wamp_read, wamp_update,
+                        wamp_delete, wamp_patch
+                        handlers were not registered for `#{@constructor.name}`.
+                        Check `urlRoot` /
+                        global `WAMP_MY_ID` or `wamp_my_id` property/method
+                    "
+
 
 
         class WAMP_Collection extends Backbone.Collection
 
             constructor : ->
-                attach_handlers.call @
                 super
+                @wamp_attach_handlers()
 
             model : WAMP_Model
 
@@ -106,6 +121,20 @@ do (
                 super method, collection,
                     mixin_wamp_options(method, collection, options)
 
+            wamp_attach_handlers : ->
+                if (
+                    _.result(@, "url") and
+                    (@wamp_my_id or global.WAMP_MY_ID)
+                )
+                    attach_handlers.call @
+                else
+                    console.warn "
+                        wamp_create, wamp_read, wamp_update,
+                        wamp_delete, wamp_patch
+                        handlers were not registered for `#{@constructor.name}`.
+                        Check `url` /
+                        global `WAMP_MY_ID` or `wamp_my_id` property/method
+                    "
 
 
 
