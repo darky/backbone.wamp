@@ -93,6 +93,14 @@ do (
                         wamp_model_id : model.id
 
             wamp_attach_handlers : ->
+                if @collection
+                    return console.warn "
+                        wamp_create, wamp_read, wamp_update,
+                        wamp_delete, wamp_patch
+                        handlers were not registered for `#{@constructor.name}`,
+                        because it contained in `#{@collection.constructor.name}`
+                    "
+
                 if (
                     _.result(@, "urlRoot") and
                     (@wamp_my_id or global.WAMP_MY_ID)
