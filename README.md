@@ -59,9 +59,10 @@ WAMP_CONNECTION.onopen = ->
     collection.create
         name : "John"
         age  : 36
-    .then ->
-        #3
-        collection.first().destroy()
+    ,
+        success : ->
+            #3
+            collection.first().destroy()
 
 WAMP_CONNECTION.open()
 
