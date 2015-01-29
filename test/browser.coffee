@@ -380,3 +380,32 @@ describe "backbone.wamp tests", ->
             ->
             -> done()
         )
+
+    it "test promises engines", (done)->
+        @timeout 10000
+        tests = _.filter @test.parent.tests, (test)->
+            test.title in ["success promise", "error promise"]
+        async.eachSeries(
+            [
+                use_deferred     : $.Deferred
+            ,
+                use_deferred     : Q.defer
+            ,
+                use_es6_promises : true
+            ]
+            (opts, next)=>
+                global.WAMP_CONNECTION = new autobahn.Connection(
+                    _.extend
+                        url   : "ws://127.0.0.1:9000/ws"
+                        realm : "realm1"
+                    ,
+                        opts
+                )
+                global.WAMP_CONNECTION.onopen = =>
+                    async.eachSeries tests, (test, next)=>
+                        test.fn.call @, next
+                    ,
+                        next
+                global.WAMP_CONNECTION.open()
+            done
+        )

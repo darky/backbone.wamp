@@ -80,7 +80,11 @@ do (
             , (obj)->
                 ajax_options.error obj
                 defer.reject obj
-            defer.promise
+
+            if _.isFunction defer.promise
+                defer
+            else if _.isObject defer.promise
+                defer.promise
 
 
 
