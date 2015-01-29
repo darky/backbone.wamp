@@ -33,6 +33,70 @@ This connection need to save in global variable `WAMP_CONNECTION`. Or you can sa
 `wamp_connection` property of *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* classes,
 which will be incapsulated inside them. 
 
+## Fast start
+
+```coffeescript
+###########
+# browser
+###########
+
+WAMP_OTHER_ID = "nodejs"
+WAMP_CONNECTION = new autobahn.Connection
+    url   : "ws://127.0.0.1:9000/ws"
+    realm : "realm1"
+
+WAMP_CONNECTION.onopen = ->
+    
+    class Collection extends WAMP_Collection
+        
+        url : "test_collection"
+
+
+    collection = new Collection
+    #1
+    collection.fetch()
+    #2
+    collection.create
+        name : "John"
+        age  : 36
+    .then ->
+        #3
+        collection.first().destroy()
+
+WAMP_CONNECTION.open()
+
+
+
+##########
+# nodejs
+##########
+
+WAMP_MY_ID = "nodejs"
+WAMP_CONNECTION = new autobahn.Connection
+    url   : "ws://127.0.0.1:9000/ws"
+    realm : "realm1"
+
+WAMP_CONNECTION.onopen = ->
+    
+    class Collection extends WAMP_Collection
+        
+        url : "test_collection"
+
+        wamp_read : ->
+            #1
+
+        wamp_create : ({data})->
+            #2
+
+        wamp_delete : ({extra})->
+            #3
+
+
+    collection = new Collection
+
+WAMP_CONNECTION.open()
+```
+
 ## How it works
 
 ### Send WebSocket interaction
@@ -75,10 +139,6 @@ Or Promise, that **resolve** (not reject) `new autobahn.Error(params...)`
 
 Methods `save`, `fetch`, `destroy` instead `xhr` return `promise`<br>
 More about set autobahn promise <a href="http://autobahn.ws/js/reference.html#connection-options" target=_blank>here</a>
-
-## Demo
-
-see test folder
 
 ## License
 
