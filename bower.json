@@ -6,7 +6,7 @@
   "authors": [
     "Vladislav Botvin <darkvlados@gmail.com>"
   ],
-  "description": "WAMP protocol for Backbone Models and Collections",
+  "description": "WAMP protocol for Backbone Models and Collections (WebSocket)",
   "moduleType": [
     "amd",
     "node"
