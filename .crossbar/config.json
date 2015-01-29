@@ -21,6 +21,22 @@
                      ]
                   }
                ]
+            }, {
+               "name": "realm2",
+               "roles": [
+                  {
+                     "name": "anonymous",
+                     "permissions": [
+                        {
+                           "uri": "*",
+                           "publish": true,
+                           "subscribe": true,
+                           "call": true,
+                           "register": true
+                        }
+                     ]
+                  }
+               ]
             }
          ],
          "transports": [
@@ -44,8 +60,8 @@
       },
       {
          "type": "guest",
-         "executable": "coffee",
-         "arguments": ["test/node.coffee"],
+         "executable": "node",
+         "arguments": ["tmp/test/node.js"],
          "options": {
             "workdir": "../",
             "watch": {

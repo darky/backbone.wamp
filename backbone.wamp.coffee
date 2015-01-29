@@ -98,7 +98,8 @@ do (
                         wamp_create, wamp_read, wamp_update,
                         wamp_delete, wamp_patch
                         handlers were not registered for `#{@constructor.name}`,
-                        because it contained in `#{@collection.constructor.name}`
+                        because it contained in
+                        `#{@collection.constructor.name}`
                     "
 
                 if (

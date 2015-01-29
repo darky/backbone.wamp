@@ -6,7 +6,6 @@ gulp = require "gulp"
 coffee = require "gulp-coffee"
 coffeelint = require "gulp-coffeelint"
 exec = require("child_process").exec
-mocha = require "gulp-mocha"
 mocha_phantomjs = require "gulp-mocha-phantomjs"
 qunit = require "gulp-qunit"
 sourcemaps = require "gulp-sourcemaps"
@@ -69,9 +68,17 @@ gulp.task "compile", ->
         sourceRoot     : "./"
     .pipe gulp.dest "./"
 
+    gulp.src "test/*.coffee"
+    .pipe sourcemaps.init()
+    .pipe coffee()
+    .pipe sourcemaps.write
+        includeContent : false
+        sourceRoot     : "../../test"
+    .pipe gulp.dest "tmp/test/"
+
 
 # *********
 #    DEV
 # *********
 gulp.task "dev", ->
-    gulp.watch ["*.coffee"], ["build"]
+    gulp.watch ["*.coffee", "test/*.coffee"], ["build"]

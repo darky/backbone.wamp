@@ -1,7 +1,7 @@
 autobahn = require "autobahn"
 _ = require "underscore"
 Backbone = require "backbone"
-[WAMP_Model, WAMP_Collection] = require "../backbone.wamp.coffee"
+[WAMP_Model, WAMP_Collection] = require "../../backbone.wamp.js"
 
 global.WAMP_CONNECTION = new autobahn.Connection
     url   : "ws://127.0.0.1:9000/ws"
@@ -20,19 +20,22 @@ global.WAMP_CONNECTION.onopen = ->
         wamp_create : (options)->
             {data} = options
 
-            @set _.extend(data, id : parseInt _.uniqueId())
+            @set _.extend(
+                data
+                id   : parseInt _.uniqueId()
+            )
             @toJSON()
 
         wamp_update : (options)->
             {data, extra} = options
 
-            @set data
+            @set _.extend data, type : "update"
             @toJSON()
 
         wamp_patch : (options)->
             {data, extra} = options
 
-            @set data
+            @set _.extend data, type : "patch"
             @toJSON()
 
         wamp_delete : (options)->
@@ -56,23 +59,51 @@ global.WAMP_CONNECTION.onopen = ->
             else
                 @toJSON()
 
-        wamp_create : (options)->
-            {data} = options
+        wamp_create : (options, details)->
+            {data, extra} = options
 
-            @add _.extend(data, id : parseInt _.uniqueId())
-            @last().toJSON()
+            switch true
+                when extra.check_success_promise
+                    deferred = global.WAMP_CONNECTION.defer()
+                    _.defer =>
+                        @add _.extend(
+                            data
+                            id           : parseInt _.uniqueId()
+                            wamp_extra   : extra.check_it
+                            wamp_options : !!details.progress
+                        )
+                        deferred.resolve @last().toJSON()
+                    deferred.promise
+                when extra.check_error
+                    new autobahn.Error "sync error"
+                when extra.check_error_promise
+                    deferred = global.WAMP_CONNECTION.defer()
+                    _.defer ->
+                        deferred.resolve new autobahn.Error "promise error"
+                    deferred.promise
+                else
+                    @add _.extend(
+                        data
+                        id           : parseInt _.uniqueId()
+                        wamp_extra   : extra.check_it
+                        wamp_options : !!details.progress
+                    )
+                    @last().toJSON()
 
         wamp_update : (options)->
             {data, extra} = options
 
             @get extra.wamp_model_id
-            .set data
+            .set _.extend(
+                data
+                type : "update"
+            )
 
         wamp_patch : (options)->
             {data, extra} = options
 
             @get extra.wamp_model_id
-            .set data
+            .set _.extend data, type : "patch"
 
         wamp_delete : (options)->
             {extra} = options
