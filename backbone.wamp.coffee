@@ -54,6 +54,7 @@ do (
                 else
                     ajax_options.url
 
+            defer = connection.defer()
             connection.session.call(
                 """
                     #{uri}.\
@@ -72,10 +73,14 @@ do (
             .then (obj)->
                 if obj?.error
                     ajax_options.error obj
+                    defer.reject obj
                 else
                     ajax_options.success obj
+                    defer.resolve obj
             , (obj)->
                 ajax_options.error obj
+                defer.reject obj
+            defer.promise
 
 
 

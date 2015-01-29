@@ -73,6 +73,13 @@ that resolve this data.<br>
 For error you must return `new autobahn.Error(params...)` <a href=http://autobahn.ws/js/reference.html#errors target=_blank>More info...</a><br>
 Or Promise, that **resolve** (not reject) `new autobahn.Error(params...)`
 
+Methods `save`, `fetch`, `destroy` instead `xhr` return `promise`<br>
+More about set autobahn promise <a href="http://autobahn.ws/js/reference.html#connection-options" target=_blank>here</a>
+
+## Demo
+
+see tests folder
+
 ## License
 
 (The MIT License)

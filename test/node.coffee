@@ -18,7 +18,10 @@ global.WAMP_CONNECTION.onopen = ->
             @toJSON()
 
         wamp_create : (options)->
-            {data} = options
+            {data, extra} = options
+
+            if extra.check_error
+                return new autobahn.Error "sync error"
 
             @set _.extend(
                 data

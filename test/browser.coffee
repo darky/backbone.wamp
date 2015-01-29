@@ -365,3 +365,18 @@ describe "backbone.wamp tests", ->
         ,
             error      : -> done()
             wamp_extra : check_error_promise : true
+
+    it "success promise", (done)->
+        model.save a : 1
+        .then -> done()
+
+    it "error promise", (done)->
+        model.save
+            a  : 1
+            id : null
+        ,
+            wamp_extra : check_error : true
+        .then(
+            ->
+            -> done()
+        )
