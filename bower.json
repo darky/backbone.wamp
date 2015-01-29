@@ -1,7 +1,7 @@
 {
   "name": "backbone.wamp",
   "main": "backbone.wamp.js",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "homepage": "https://github.com/darrrk/backbone.wamp",
   "authors": [
     "Vladislav Botvin <darkvlados@gmail.com>"
