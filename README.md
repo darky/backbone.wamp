@@ -78,7 +78,7 @@ More about set autobahn promise <a href="http://autobahn.ws/js/reference.html#co
 
 ## Demo
 
-see tests folder
+see test folder
 
 ## License
 
