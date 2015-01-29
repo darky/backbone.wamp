@@ -48,7 +48,10 @@ gulp.task "test-own-crossbar", (cb)->
     _.delay cb, 10000
 
 gulp.task "test-own", ["test-own-crossbar"], (cb)->
-    cb()
+    stream = mocha_phantomjs()
+    stream.write path : "http://127.0.0.1:9000/test/"
+    stream.end()
+    stream
 
 
 # ***********
