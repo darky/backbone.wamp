@@ -55,8 +55,8 @@
         wamp_other_id: ((ref1 = entity.collection) != null ? ref1.wamp_other_id : void 0) || entity.wamp_other_id || global.WAMP_OTHER_ID
       });
     };
-    wamp_get_uri = function(uri, wamp_id, action) {
-      return uri + "." + wamp_id + "." + action;
+    wamp_get_uri = function(uri, peer_id, action) {
+      return uri + "." + peer_id + "." + action;
     };
     backbone_ajax_original = Backbone.ajax;
     Backbone.ajax = function(ajax_options) {

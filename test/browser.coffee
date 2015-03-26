@@ -145,7 +145,7 @@ describe "backbone.wamp tests", ->
 
             wamp_attach_handlers : ->
 
-            wamp_get_uri : (uri, wamp_id, action)->
+            wamp_get_uri : (uri, peer_id, action)->
                 "custom_uri.#{action}"
 
         c = new C()

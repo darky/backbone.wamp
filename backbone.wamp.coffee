@@ -59,10 +59,10 @@ do (
                 wamp_other_id   : entity.collection?.wamp_other_id or
                     entity.wamp_other_id or global.WAMP_OTHER_ID
 
-        wamp_get_uri = (uri, wamp_id, action)->
+        wamp_get_uri = (uri, peer_id, action)->
             """
                 #{uri}.\
-                #{wamp_id}.\
+                #{peer_id}.\
                 #{action}
             """
 

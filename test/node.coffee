@@ -118,7 +118,7 @@ global.WAMP_CONNECTION.onopen = ->
 
         url : "qweqwe"
 
-        wamp_get_uri : (uri, wamp_id, action)->
+        wamp_get_uri : (uri, peer_id, action)->
             "custom_uri.#{action}"
 
         wamp_read : ->
