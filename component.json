@@ -1,6 +1,6 @@
 {
   "name"          : "backbone.wamp",
-  "version"       : "0.7.4",
+  "version"       : "0.7.5",
   "description"   : "WAMP protocol for Backbone Models and Collections (WebSocket)",
   "keywords"      : [
     "backbone",
