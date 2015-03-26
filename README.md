@@ -141,6 +141,12 @@ Or Promise, that **resolve** (not reject) `new autobahn.Error(params...)`
 Methods `save`, `fetch`, `destroy` instead `xhr` return `promise`<br>
 More about set autobahn promise <a href="http://autobahn.ws/js/reference.html#connection-options" target=_blank>here</a>
 
+### Overwrite "entity.peer_id.action" message
+
+You can overwrite template of WebSocket messages to define global `WAMP_GET_URI` or for specific class `wamp_get_uri`,
+which should return message in another form.
+Function receive params: entity, peer_id, action
+
 ## License
 
 (The MIT License)
