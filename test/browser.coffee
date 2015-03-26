@@ -137,6 +137,24 @@ describe "backbone.wamp tests", ->
 
             done()
 
+
+    it "wamp_get_uri property", (done)->
+        class C extends Collection
+
+            url : "qweqwe"
+
+            wamp_attach_handlers : ->
+
+            wamp_get_uri : (uri, wamp_id, action)->
+                "custom_uri.#{action}"
+
+        c = new C()
+
+        c.fetch success : (c)->
+            chai.expect c.at(0).get("custom_uri")
+            .true
+            done()
+
     it "model create", (done)->
         model.once "sync", (some..., opts)->
             chai.expect model.id

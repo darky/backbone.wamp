@@ -114,9 +114,20 @@ global.WAMP_CONNECTION.onopen = ->
             @remove @get extra.wamp_model_id
             {}
 
+    class Collection_URI extends WAMP_Collection
+
+        url : "qweqwe"
+
+        wamp_get_uri : (uri, wamp_id, action)->
+            "custom_uri.#{action}"
+
+        wamp_read : ->
+            [custom_uri : true]
+
 
     m = new Model()
     c = new Collection()
+    c_uri = new Collection_URI()
 
 
 global.WAMP_CONNECTION.open()

@@ -15,27 +15,56 @@ do (
             _.each(
                 _.values action_map
                 (action)=>
-                    connection.session.register """
-                        #{_.result(@, "url") or _.result(@, "urlRoot")}.\
-                        #{_.result(@, "wamp_my_id") or global.WAMP_MY_ID}.\
-                        #{action}
-                    """, (args, kwargs, details)=>
-                        if kwargs.data
-                            kwargs.data = JSON.parse kwargs.data
-                        @["wamp_#{action}"]?(kwargs, details) or
-                        new autobahn.Error(
-                            "Not defined procedure for action: #{action}"
+                    get_uri =
+                        if (
+                            _.has(@, "wamp_get_uri")  or
+                            _.has(@constructor::, "wamp_get_uri")
                         )
+                            @wamp_get_uri
+                        else
+                            global.WAMP_GET_URI or @wamp_get_uri
+
+                    connection.session.register(
+                        get_uri.call(
+                            @
+                            _.result(@, "url") or _.result(@, "urlRoot")
+                            _.result(@, "wamp_my_id") or global.WAMP_MY_ID
+                            action
+                        )
+                        (args, kwargs, details)=>
+                            if kwargs.data
+                                kwargs.data = JSON.parse kwargs.data
+                            @["wamp_#{action}"]?(kwargs, details) or
+                            new autobahn.Error(
+                                "Not defined procedure for action: #{action}"
+                            )
+                    )
             )
 
         mixin_wamp_options = (method, entity, options)->
             _.extend options,
                 wamp            : true
                 wamp_connection : entity.wamp_connection
+                wamp_get_uri    :
+                    if (
+                        _.has(entity, "wamp_get_uri")  or
+                        _.has(entity.constructor::, "wamp_get_uri")
+                    )
+                        _.bind entity.wamp_get_uri, entity
+                    else
+                        global.WAMP_GET_URI or
+                         _.bind entity.wamp_get_uri, entity
                 wamp_my_id      : entity.collection?.wamp_my_id or
                     entity.wamp_my_id or global.WAMP_MY_ID
                 wamp_other_id   : entity.collection?.wamp_other_id or
                     entity.wamp_other_id or global.WAMP_OTHER_ID
+
+        wamp_get_uri = (uri, wamp_id, action)->
+            """
+                #{uri}.\
+                #{wamp_id}.\
+                #{action}
+            """
 
         backbone_ajax_original = Backbone.ajax
 
@@ -56,11 +85,11 @@ do (
 
             defer = connection.defer()
             connection.session.call(
-                """
-                    #{uri}.\
-                    #{_.result ajax_options, "wamp_other_id"}.\
-                    #{action_map[ajax_options.type]}
-                """
+                ajax_options.wamp_get_uri(
+                    uri
+                    _.result ajax_options, "wamp_other_id"
+                    action_map[ajax_options.type]
+                )
                 []
                 data  : ajax_options.data
                 extra : _.extend(
@@ -125,6 +154,8 @@ do (
                         global `WAMP_MY_ID` or `wamp_my_id` property/method
                     "
 
+            wamp_get_uri : wamp_get_uri
+
 
 
         class WAMP_Collection extends Backbone.Collection
@@ -153,6 +184,8 @@ do (
                         Check `url` /
                         global `WAMP_MY_ID` or `wamp_my_id` property/method
                     "
+
+            wamp_get_uri : wamp_get_uri
 
 
 
