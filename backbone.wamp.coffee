@@ -8,6 +8,8 @@ factory = (global, _, Backbone, autobahn)->
         "DELETE" : "delete"
         "GET"    : "read"
 
+    actions = _.values action_map
+
     attach_handlers = ->
         connection = @wamp_connection or global.WAMP_CONNECTION
 
@@ -20,25 +22,22 @@ factory = (global, _, Backbone, autobahn)->
             else
                 global.WAMP_GET_URI or @wamp_get_uri
 
-        _.each(
-            _.values action_map
-            (action)=>
-                connection.session.register(
-                    get_uri.call(
-                        @
-                        _.result(@, "url") or _.result(@, "urlRoot")
-                        _.result(@, "wamp_my_id") or global.WAMP_MY_ID
-                        action
-                    )
-                    (args, kwargs, details)=>
-                        if kwargs.data
-                            kwargs.data = JSON.parse kwargs.data
-                        @["wamp_#{action}"]?(kwargs, details) or
-                        new autobahn.Error(
-                            "Not defined procedure for action: #{action}"
-                        )
+        _.each actions, (action)=>
+            connection.session.register(
+                get_uri.call(
+                    @
+                    _.result(@, "url") or _.result(@, "urlRoot")
+                    _.result(@, "wamp_my_id") or global.WAMP_MY_ID
+                    action
                 )
-        )
+                (args, kwargs, details)=>
+                    if kwargs.data
+                        kwargs.data = JSON.parse kwargs.data
+                    @["wamp_#{action}"]?(kwargs, details) or
+                    new autobahn.Error(
+                        "Not defined procedure for action: #{action}"
+                    )
+            )
 
     mixin_wamp_options = (method, entity, options)->
         _.extend options,
