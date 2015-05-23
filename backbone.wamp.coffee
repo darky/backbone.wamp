@@ -11,18 +11,18 @@ factory = (global, _, Backbone, autobahn)->
     attach_handlers = ->
         connection = @wamp_connection or global.WAMP_CONNECTION
 
+        get_uri =
+            if (
+                _.has(@, "wamp_get_uri")  or
+                _.has(@constructor::, "wamp_get_uri")
+            )
+                @wamp_get_uri
+            else
+                global.WAMP_GET_URI or @wamp_get_uri
+
         _.each(
             _.values action_map
             (action)=>
-                get_uri =
-                    if (
-                        _.has(@, "wamp_get_uri")  or
-                        _.has(@constructor::, "wamp_get_uri")
-                    )
-                        @wamp_get_uri
-                    else
-                        global.WAMP_GET_URI or @wamp_get_uri
-
                 connection.session.register(
                     get_uri.call(
                         @
