@@ -1,6 +1,6 @@
 {
   "name": "backbone.wamp",
-  "version": "0.10.0",
+  "version": "1.0.0",
   "main": "backbone.wamp.js",
   "license": "MIT",
   "description": "WAMP protocol for Backbone Models and Collections (WebSocket)",
