@@ -16,20 +16,17 @@ factory = (global, _, Backbone, autobahn)->
         get_uri = @wamp_get_uri or global.WAMP_GET_URI or wamp_get_uri
 
         _.each actions, (action)=>
-            connection.session.register(
-                get_uri.call(
-                    @
+            connection.session.register if 1
+                get_uri.call @,
                     _.result(@, "url") or _.result(@, "urlRoot")
                     _.result(@, "wamp_my_id") or global.WAMP_MY_ID
                     action
-                )
+            ,
                 (args, kwargs, details)=>
                     try kwargs.data = JSON.parse kwargs.data
                     @["wamp_#{action}"]?(kwargs, details) or
-                    new autobahn.Error(
+                    new autobahn.Error if 1
                         "Not defined procedure for action: #{action}"
-                    )
-            )
 
     mixin_wamp_options = (method, entity, options)->
         _.extend options,
@@ -59,33 +56,32 @@ factory = (global, _, Backbone, autobahn)->
         unless ajax_options.wamp
             return backbone_ajax_original ajax_options
 
-        connection = ajax_options.wamp_connection or
-            global.WAMP_CONNECTION
+        connection = ajax_options.wamp_connection or global.WAMP_CONNECTION
+
         uri =
             if ajax_options.wamp_model_id
-                ajax_options.url.replace(
+                ajax_options.url.replace if 1
                     new RegExp "/#{ajax_options.wamp_model_id}$"
+                ,
                     ""
-                )
             else
                 ajax_options.url
 
         defer = connection.defer()
-        connection.session.call(
-            ajax_options.wamp_get_uri(
-                uri
+
+        connection.session.call if 1
+            ajax_options.wamp_get_uri uri,
                 _.result ajax_options, "wamp_other_id"
                 action_map[ajax_options.type]
-            )
+        ,
             []
             data  : ajax_options.data
-            extra : _.extend(
+            extra : _.extend if 1
                 ajax_options.wamp_extra or {}
+            ,
                 wamp_model_id : ajax_options.wamp_model_id
                 wamp_my_id    : ajax_options.wamp_my_id
-            )
             ajax_options.wamp_options
-        )
         .then (obj)->
             if obj?.error
                 ajax_options.error obj
@@ -114,7 +110,9 @@ factory = (global, _, Backbone, autobahn)->
 
         sync : (method, model, options = {})->
             super method, model,
-                _.extend mixin_wamp_options(method, model, options),
+                _.extend if 1
+                    mixin_wamp_options method, model, options
+                ,
                     wamp_model_id : model.id
 
         wamp_attach_handlers : ->
@@ -153,7 +151,7 @@ factory = (global, _, Backbone, autobahn)->
 
         sync  : (method, collection, options = {})->
             super method, collection,
-                mixin_wamp_options(method, collection, options)
+                mixin_wamp_options method, collection, options
 
         wamp_attach_handlers : ->
             if (
