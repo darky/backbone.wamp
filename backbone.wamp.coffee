@@ -12,15 +12,13 @@ factory = (global, _, Backbone, autobahn)->
 
     attach_handlers = ->
         connection = @wamp_connection or global.WAMP_CONNECTION
-
         get_uri = @wamp_get_uri or global.WAMP_GET_URI or wamp_get_uri
+        uri = _.result(@, "url") or _.result(@, "urlRoot")
+        wamp_my_id = _.result(@, "wamp_my_id") or global.WAMP_MY_ID
 
         _.each actions, (action)=>
             connection.session.register if 1
-                get_uri.call @,
-                    _.result(@, "url") or _.result(@, "urlRoot")
-                    _.result(@, "wamp_my_id") or global.WAMP_MY_ID
-                    action
+                get_uri.call @, uri, wamp_my_id, action
             ,
                 (args, kwargs, details)=>
                     try kwargs.data = JSON.parse kwargs.data
@@ -171,6 +169,7 @@ factory = (global, _, Backbone, autobahn)->
 
 
     [WAMP_Model, WAMP_Collection]
+
 
 
 if typeof define is "function"  and  define.amd
