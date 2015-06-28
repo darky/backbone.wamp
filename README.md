@@ -146,6 +146,14 @@ You can overwrite template of WebSocket messages to define global `WAMP_GET_URI`
 which should return message in another form.
 Function receive params: entity, peer_id, action
 
+### wamp_auth
+
+Can define `wamp_auth` method or global `WAMP_AUTH` function.<br>
+Called before `wamp_create`, `wamp_read`, `wamp_update`, `wamp_delete`, `wamp_patch` for ACL.<br>
+Receive: `uri`, `wamp_my_id`, `action`, `send_options`, `autobahn_details`.<br>
+Need return promise that resolved to `true` value for pass auth or other value otherwise.<br>
+By default returned `true` for all actions.
+
 ## License
 
 (The MIT License)
