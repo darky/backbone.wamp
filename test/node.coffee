@@ -124,10 +124,22 @@ global.WAMP_CONNECTION.onopen = ->
         wamp_read : ->
             [custom_uri : true]
 
+    class Collection_Auth extends WAMP_Collection
 
-    m = new Model()
-    c = new Collection()
-    c_uri = new Collection_URI()
+        url : "auth_collection"
+
+        wamp_auth : (uri, wamp_my_id, action, kwargs, details)->
+            defer = global.WAMP_CONNECTION.defer()
+            defer.resolve kwargs.data?.auth
+            defer.promise
+
+        wamp_read : ->
+            [{auth : true}]
+
+    m = new Model
+    c = new Collection
+    c_uri = new Collection_URI
+    c_auth = new Collection_Auth
 
 
 global.WAMP_CONNECTION.open()

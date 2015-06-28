@@ -18,16 +18,43 @@ factory = (global, _, Backbone, autobahn)->
 
         connection = @wamp_connection or global.WAMP_CONNECTION
         get_uri = @wamp_get_uri or global.WAMP_GET_URI or wamp_get_uri
+        wamp_auth = @wamp_auth or global.WAMP_AUTH or ->
+            defer = connection.defer()
+            defer.resolve true
+            if _.isFunction defer.promise
+                defer
+            else if _.isObject defer.promise
+                defer.promise
 
         _.each actions, (action)=>
             connection.session.register if 1
                 get_uri.call @, uri, wamp_my_id, action
             ,
                 (args, kwargs, details)=>
-                    try kwargs.data = JSON.parse kwargs.data
-                    @["wamp_#{action}"]?(kwargs, details) or
-                    new autobahn.Error if 1
-                        "Not defined procedure for action: #{action}"
+                    defer = connection.defer()
+
+                    wamp_auth uri, wamp_my_id, action, kwargs, details
+                    .then (is_auth)=>
+                        if is_auth is true
+                            try kwargs.data = JSON.parse kwargs.data
+                            action_result = @["wamp_#{action}"]? kwargs, details
+
+                            if typeof action_result?.then is "function"
+                                action_result.then (result)->
+                                    defer.resolve result
+                            else if action_result?
+                                defer.resolve action_result
+                            else
+                                defer.resolve new autobahn.Error "
+                                    Not defined procedure for action: #{action}
+                                "
+                        else
+                            defer.resolve new autobahn.Error "Auth error"
+
+                    if _.isFunction defer.promise
+                        defer
+                    else if _.isObject defer.promise
+                        defer.promise
 
     mixin_wamp_options = (method, entity, options)->
         _.extend options,

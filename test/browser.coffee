@@ -420,3 +420,33 @@ describe "backbone.wamp tests", ->
                 global.WAMP_CONNECTION.open()
             done
         )
+
+    it "auth not passed", (done)->
+        class C extends Collection
+
+            url : "auth_collection"
+
+        c = new C()
+
+        c.fetch error : (c, obj)->
+            chai.expect obj.error
+            .equal "Auth error"
+
+            done()
+
+    it "auth passed", (done)->
+        class C extends Collection
+
+            url : "auth_collection"
+
+        c = new C()
+
+        c.fetch
+            data : auth : true
+            success : (c)->
+                chai.expect if 1
+                    c.at 0
+                    .get "auth"
+                .equal true
+
+                done()
