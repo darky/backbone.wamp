@@ -109,8 +109,7 @@ WAMP_CONNECTION.open()
 
 ### Receive WebSocket interaction
 
-In `constructor` of *Backbone.WAMP_Model* / *Backbone.WAMP_Collection* called `wamp_attach_handlers`,
-that allows you define **CRUD** callback-methods:
+You can define **CRUD** callback-methods:
 `wamp_create`, `wamp_read`, `wamp_update`, `wamp_delete`, `wamp_patch`,
 which called via WebSocket messages, as `entity.peer_id.CRUD_action`, where:
 
