@@ -10,11 +10,14 @@ factory = (global, _, Backbone, autobahn)->
 
     actions = _.values action_map
 
-    attach_handlers = ->
+    attach_handlers = (uri_key)->
+        uri = _.result @, uri_key
+        wamp_my_id = _.result(@, "wamp_my_id") or global.WAMP_MY_ID
+
+        if not uri or not wamp_my_id then return
+
         connection = @wamp_connection or global.WAMP_CONNECTION
         get_uri = @wamp_get_uri or global.WAMP_GET_URI or wamp_get_uri
-        uri = _.result(@, "url") or _.result(@, "urlRoot")
-        wamp_my_id = _.result(@, "wamp_my_id") or global.WAMP_MY_ID
 
         _.each actions, (action)=>
             connection.session.register if 1
@@ -103,7 +106,7 @@ factory = (global, _, Backbone, autobahn)->
         constructor : (attributes, options = {})->
             super
             unless options.collection
-                @wamp_attach_handlers()
+                attach_handlers.call @, "urlRoot"
 
 
         sync : (method, model, options = {})->
@@ -113,49 +116,19 @@ factory = (global, _, Backbone, autobahn)->
                 ,
                     wamp_model_id : model.id
 
-        wamp_attach_handlers : ->
-            if (
-                _.result(@, "urlRoot") and
-                (@wamp_my_id or global.WAMP_MY_ID)
-            )
-                attach_handlers.call @
-            else
-                console.warn "
-                    wamp_create, wamp_read, wamp_update,
-                    wamp_delete, wamp_patch
-                    handlers were not registered for `#{@constructor.name}`.
-                    Check `urlRoot` /
-                    global `WAMP_MY_ID` or `wamp_my_id` property/method
-                "
-
 
 
     class WAMP_Collection extends Backbone.Collection
 
         constructor : ->
             super
-            @wamp_attach_handlers()
+            attach_handlers.call @, "url"
 
         model : WAMP_Model
 
         sync  : (method, collection, options = {})->
             super method, collection,
                 mixin_wamp_options method, collection, options
-
-        wamp_attach_handlers : ->
-            if (
-                _.result(@, "url") and
-                (@wamp_my_id or global.WAMP_MY_ID)
-            )
-                attach_handlers.call @
-            else
-                console.warn "
-                    wamp_create, wamp_read, wamp_update,
-                    wamp_delete, wamp_patch
-                    handlers were not registered for `#{@constructor.name}`.
-                    Check `url` /
-                    global `WAMP_MY_ID` or `wamp_my_id` property/method
-                "
 
 
 

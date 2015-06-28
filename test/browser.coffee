@@ -41,7 +41,6 @@ describe "backbone.wamp tests", ->
 
 
         m = new M()
-        m.wamp_attach_handlers()
 
 
         class C extends Collection
@@ -50,18 +49,14 @@ describe "backbone.wamp tests", ->
 
 
         c = new C()
-        c.wamp_attach_handlers()
 
         global.WAMP_MY_ID = null
 
         m = new Model()
-        m.wamp_attach_handlers()
 
         c = new Collection()
-        c.wamp_attach_handlers()
 
         c.add {a: 1}
-        c.at(0).wamp_attach_handlers()
 
         global.WAMP_MY_ID = "browser"
 
@@ -142,8 +137,6 @@ describe "backbone.wamp tests", ->
         class C extends Collection
 
             url : "qweqwe"
-
-            wamp_attach_handlers : ->
 
             wamp_get_uri : (uri, peer_id, action)->
                 "custom_uri.#{action}"
