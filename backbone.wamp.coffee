@@ -13,14 +13,7 @@ factory = (global, _, Backbone, autobahn)->
     attach_handlers = ->
         connection = @wamp_connection or global.WAMP_CONNECTION
 
-        get_uri =
-            if (
-                _.has(@, "wamp_get_uri")  or
-                _.has(@constructor::, "wamp_get_uri")
-            )
-                @wamp_get_uri
-            else
-                global.WAMP_GET_URI or @wamp_get_uri
+        get_uri = @wamp_get_uri or global.WAMP_GET_URI or wamp_get_uri
 
         _.each actions, (action)=>
             connection.session.register(
@@ -42,15 +35,12 @@ factory = (global, _, Backbone, autobahn)->
         _.extend options,
             wamp            : true
             wamp_connection : entity.wamp_connection
-            wamp_get_uri    :
-                if (
-                    _.has(entity, "wamp_get_uri")  or
-                    _.has(entity.constructor::, "wamp_get_uri")
-                )
-                    _.bind entity.wamp_get_uri, entity
-                else
-                    global.WAMP_GET_URI or
-                     _.bind entity.wamp_get_uri, entity
+            wamp_get_uri    : _.bind if 1
+                entity.wamp_get_uri or
+                global.WAMP_GET_URI or
+                wamp_get_uri
+            ,
+                entity
             wamp_my_id      : entity.collection?.wamp_my_id or
                 entity.wamp_my_id or global.WAMP_MY_ID
             wamp_other_id   : entity.collection?.wamp_other_id or
@@ -151,8 +141,6 @@ factory = (global, _, Backbone, autobahn)->
                     global `WAMP_MY_ID` or `wamp_my_id` property/method
                 "
 
-        wamp_get_uri : wamp_get_uri
-
 
 
     class WAMP_Collection extends Backbone.Collection
@@ -181,8 +169,6 @@ factory = (global, _, Backbone, autobahn)->
                     Check `url` /
                     global `WAMP_MY_ID` or `wamp_my_id` property/method
                 "
-
-        wamp_get_uri : wamp_get_uri
 
 
 
