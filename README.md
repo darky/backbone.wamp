@@ -154,6 +154,13 @@ Receive: `uri`, `wamp_my_id`, `action`, `send_options`, `autobahn_details`.<br>
 Need return promise that resolved to `true` value for pass auth or other value otherwise.<br>
 By default returned `true` for all actions.
 
+### Session
+
+This can be useful for `wamp_auth`.<br>
+For session mechanism need dynamically generate `wamp_my_id`.<br>
+Example: `browser_0dbee552-46e0-4c7c-aa4e-e1341dc00b18`<br>
+Use any UUID, GUID, e.t.c. generator, maybe [node-uuid](https://github.com/broofa/node-uuid)
+
 ## License
 
 (The MIT License)
