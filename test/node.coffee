@@ -1,7 +1,8 @@
 autobahn = require "autobahn"
 _ = require "underscore"
 Backbone = require "backbone"
-[WAMP_Model, WAMP_Collection] = require "../../backbone.wamp.js"
+WAMPModel = require("../../backbone.wamp.js").Model
+WAMPCollection = require("../../backbone.wamp.js").Collection
 
 global.WAMP_CONNECTION = new autobahn.Connection
     url   : "ws://127.0.0.1:9000/ws"
@@ -10,14 +11,14 @@ global.WAMP_MY_ID = "nodejs"
 
 global.WAMP_CONNECTION.onopen = ->
 
-    class Model extends WAMP_Model
+    class Model extends WAMPModel
 
         urlRoot : "test_model"
 
-        wamp_read : (options)->
+        wampRead : (options)->
             @toJSON()
 
-        wamp_create : (options)->
+        wampCreate : (options)->
             {data, extra} = options
 
             if extra.check_error
@@ -29,19 +30,19 @@ global.WAMP_CONNECTION.onopen = ->
             )
             @toJSON()
 
-        wamp_update : (options)->
+        wampUpdate : (options)->
             {data, extra} = options
 
             @set _.extend data, type : "update"
             @toJSON()
 
-        wamp_patch : (options)->
+        wampPatch : (options)->
             {data, extra} = options
 
             @set _.extend data, type : "patch"
             @toJSON()
 
-        wamp_delete : (options)->
+        wampDelete : (options)->
             {extra} = options
 
             @set {}
@@ -49,20 +50,20 @@ global.WAMP_CONNECTION.onopen = ->
 
 
 
-    class Collection extends WAMP_Collection
+    class Collection extends WAMPCollection
         
         url : "test_collection"
 
-        wamp_read : (options)->
+        wampRead : (options)->
             {extra} = options
 
-            if extra.wamp_model_id
-                @get extra.wamp_model_id
+            if extra.wampModelId
+                @get extra.wampModelId
                 .toJSON()
             else
                 @toJSON()
 
-        wamp_create : (options, details)->
+        wampCreate : (options, details)->
             {data, extra} = options
 
             switch true
@@ -72,8 +73,8 @@ global.WAMP_CONNECTION.onopen = ->
                         @add _.extend(
                             data
                             id           : parseInt _.uniqueId()
-                            wamp_extra   : extra.check_it
-                            wamp_options : !!details.progress
+                            wampExtra   : extra.check_it
+                            wampOptions : !!details.progress
                         )
                         deferred.resolve @last().toJSON()
                     deferred.promise
@@ -88,52 +89,52 @@ global.WAMP_CONNECTION.onopen = ->
                     @add _.extend(
                         data
                         id           : parseInt _.uniqueId()
-                        wamp_extra   : extra.check_it
-                        wamp_options : !!details.progress
+                        wampExtra   : extra.check_it
+                        wampOptions : !!details.progress
                     )
                     @last().toJSON()
 
-        wamp_update : (options)->
+        wampUpdate : (options)->
             {data, extra} = options
 
-            @get extra.wamp_model_id
+            @get extra.wampModelId
             .set _.extend(
                 data
                 type : "update"
             )
 
-        wamp_patch : (options)->
+        wampPatch : (options)->
             {data, extra} = options
 
-            @get extra.wamp_model_id
+            @get extra.wampModelId
             .set _.extend data, type : "patch"
 
-        wamp_delete : (options)->
+        wampDelete : (options)->
             {extra} = options
 
-            @remove @get extra.wamp_model_id
+            @remove @get extra.wampModelId
             {}
 
-    class Collection_URI extends WAMP_Collection
+    class Collection_URI extends WAMPCollection
 
         url : "qweqwe"
 
-        wamp_get_uri : (uri, peer_id, action)->
+        wampGetUri : (uri, peer_id, action)->
             "custom_uri.#{action}"
 
-        wamp_read : ->
+        wampRead : ->
             [custom_uri : true]
 
-    class Collection_Auth extends WAMP_Collection
+    class Collection_Auth extends WAMPCollection
 
         url : "auth_collection"
 
-        wamp_auth : (uri, wamp_my_id, action, kwargs, details)->
+        wampAuth : (uri, wampMyId, action, kwargs, details)->
             defer = global.WAMP_CONNECTION.defer()
             defer.resolve kwargs.data?.auth
             defer.promise
 
-        wamp_read : ->
+        wampRead : ->
             [{auth : true}]
 
     m = new Model

@@ -14,12 +14,12 @@ describe "backbone.wamp tests", ->
             realm : "realm1"
         global.WAMP_CONNECTION.onopen = ->
 
-            class Model extends Backbone.WAMP_Model
+            class Model extends Backbone.WAMPModel
 
                 urlRoot : "test_model"
 
 
-            class Collection extends Backbone.WAMP_Collection
+            class Collection extends Backbone.WAMPCollection
 
                 url : "test_collection"
 
@@ -66,14 +66,14 @@ describe "backbone.wamp tests", ->
             done()
         , 1900
 
-    it "wamp_connection property", (done)->
+    it "wampConnection property", (done)->
         connection = new autobahn.Connection
             url   : "ws://127.0.0.1:9000/ws"
             realm : "realm2"
         connection.onopen = ->
             class M extends Model
 
-                wamp_connection : connection
+                wampConnection : connection
 
                 urlRoot : "test_model_realm2"
 
@@ -95,10 +95,10 @@ describe "backbone.wamp tests", ->
             , 1500
         connection.open()
 
-    it "wamp_my_id property", (done)->
+    it "wampMyId property", (done)->
         class M extends Model
 
-            wamp_my_id : "browser2"
+            wampMyId : "browser2"
 
 
         m = new M()
@@ -116,10 +116,10 @@ describe "backbone.wamp tests", ->
         ,
             1500
 
-    it "wamp_other_id property", (done)->
+    it "wampOtherId property", (done)->
         class M extends Model
 
-            wamp_other_id : "nodejs2"
+            wampOtherId : "nodejs2"
 
             urlRoot : "test_model2"
 
@@ -127,18 +127,18 @@ describe "backbone.wamp tests", ->
         m = new M()
 
         m.fetch error : (m, err, opts)->
-            chai.expect opts.wamp_other_id
+            chai.expect opts.wampOtherId
             .equal "nodejs2"
 
             done()
 
 
-    it "wamp_get_uri property", (done)->
+    it "wampGetUri property", (done)->
         class C extends Collection
 
             url : "qweqwe"
 
-            wamp_get_uri : (uri, peer_id, action)->
+            wampGetUri : (uri, peer_id, action)->
                 "custom_uri.#{action}"
 
         c = new C()
@@ -153,7 +153,7 @@ describe "backbone.wamp tests", ->
             chai.expect model.id
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             done()
@@ -168,10 +168,10 @@ describe "backbone.wamp tests", ->
             chai.expect model.get "type"
             .equal "update"
 
-            chai.expect opts.wamp_model_id
+            chai.expect opts.wampModelId
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             done()
@@ -186,10 +186,10 @@ describe "backbone.wamp tests", ->
             chai.expect model.get "type"
             .equal "patch"
 
-            chai.expect opts.wamp_model_id
+            chai.expect opts.wampModelId
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             chai.expect opts.patch
@@ -205,10 +205,10 @@ describe "backbone.wamp tests", ->
     it "model fetch", (done)->
         data = model.toJSON()
         model.once "sync", (m, resp, opts)->
-            chai.expect opts.wamp_model_id
+            chai.expect opts.wampModelId
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             chai.expect data
@@ -219,10 +219,10 @@ describe "backbone.wamp tests", ->
 
     it "model destroy", (done)->
         model.once "destroy", (m, resp, opts)->
-            chai.expect opts.wamp_model_id
+            chai.expect opts.wampModelId
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             chai.expect _.size resp
@@ -251,10 +251,10 @@ describe "backbone.wamp tests", ->
             chai.expect collection.at(0).get "type"
             .equal "update"
 
-            chai.expect opts.wamp_model_id
+            chai.expect opts.wampModelId
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             done()
@@ -272,10 +272,10 @@ describe "backbone.wamp tests", ->
             chai.expect opts.patch
             .true
 
-            chai.expect opts.wamp_model_id
+            chai.expect opts.wampModelId
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             done()
@@ -288,10 +288,10 @@ describe "backbone.wamp tests", ->
     it "collection model fetch", (done)->
         data = collection.at(0).toJSON()
         collection.once "sync", (c, resp, opts)->
-            chai.expect opts.wamp_model_id
+            chai.expect opts.wampModelId
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             chai.expect data
@@ -303,7 +303,7 @@ describe "backbone.wamp tests", ->
     it "collection fetch", (done)->
         data = collection.toJSON()
         collection.once "sync", (c, resp, opts)->
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             chai.expect data
@@ -314,10 +314,10 @@ describe "backbone.wamp tests", ->
 
     it "collection model destroy", (done)->
         collection.once "destroy", (c, resp, opts)->
-            chai.expect opts.wamp_model_id
+            chai.expect opts.wampModelId
             .ok
 
-            chai.expect opts.wamp_my_id
+            chai.expect opts.wampMyId
             .equal "browser"
 
             chai.expect collection.length
@@ -326,9 +326,9 @@ describe "backbone.wamp tests", ->
             done()
         collection.at(0).destroy()
 
-    it "wamp_extra", (done)->
+    it "wampExtra", (done)->
         collection.once "sync", ->
-            chai.expect collection.last().get "wamp_extra"
+            chai.expect collection.last().get "wampExtra"
             .true
 
             done()
@@ -336,11 +336,11 @@ describe "backbone.wamp tests", ->
         collection.create
             a : 1
         ,
-            wamp_extra : check_it : true
+            wampExtra : check_it : true
 
-    it "wamp_options", (done)->
+    it "wampOptions", (done)->
         collection.once "sync", ->
-            chai.expect collection.last().get "wamp_options"
+            chai.expect collection.last().get "wampOptions"
             .true
 
             done()
@@ -348,7 +348,7 @@ describe "backbone.wamp tests", ->
         collection.create
             a : 1
         ,
-            wamp_options : receive_progress : true
+            wampOptions : receive_progress : true
 
     it "success callback", (done)->
         collection.create
@@ -361,21 +361,21 @@ describe "backbone.wamp tests", ->
             a : 1
         ,
             success    : -> done()
-            wamp_extra : check_success_promise : true
+            wampExtra : check_success_promise : true
 
     it "error callback", (done)->
         collection.create
             a : 1
         ,
             error      : -> done()
-            wamp_extra : check_error : true
+            wampExtra : check_error : true
 
     it "error callback promise", (done)->
         collection.create
             a : 1
         ,
             error      : -> done()
-            wamp_extra : check_error_promise : true
+            wampExtra : check_error_promise : true
 
     it "success promise", (done)->
         model.save a : 1
@@ -386,7 +386,7 @@ describe "backbone.wamp tests", ->
             a  : 1
             id : null
         ,
-            wamp_extra : check_error : true
+            wampExtra : check_error : true
         .then(
             ->
             -> done()
