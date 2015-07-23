@@ -10,18 +10,18 @@ global.WAMP_CONNECTION = new autobahn.Connection({
 });
 global.WAMP_MY_ID = "nodejs";
 global.WAMP_CONNECTION.onopen = function () {
-  var Model, Collection, Collection_URI, Collection_Auth,
-    m, c, c_uri, c_auth;
+  var Model, Collection, CollectionURI, CollectionAuth,
+    m, c, cUri, cAuth;
 
   Model = WAMPModel.extend({
-    urlRoot: "test_model",
+    urlRoot: "testModel",
     wampRead: function (options) {
       return this.toJSON();
     },
     wampCreate: function (options) {
       var data = options.data,
         extra = options.extra;
-      if (extra.check_error) {
+      if (extra.checkError) {
         return new autobahn.Error("sync error");
       }
       this.set(_.extend(data, {
@@ -49,7 +49,7 @@ global.WAMP_CONNECTION.onopen = function () {
   });
 
   Collection = WAMPCollection.extend({
-    url: "test_collection",
+    url: "testCollection",
     wampRead: function (options) {
       var extra = options.extra;
       if (extra.wampModelId) {
@@ -65,20 +65,20 @@ global.WAMP_CONNECTION.onopen = function () {
         extra = options.extra,
         self = this;
       switch (true) {
-        case extra.check_success_promise:
+        case extra.checkSuccessPromise:
           deferred = global.WAMP_CONNECTION.defer();
           _.defer(function () {
             self.add(_.extend(data, {
               id: parseInt(_.uniqueId()),
-              wampExtra: extra.check_it,
+              wampExtra: extra.checkIt,
               wampOptions: !!details.progress
             }));
             deferred.resolve(self.last().toJSON());
           });
           return deferred.promise;
-        case extra.check_error:
+        case extra.checkError:
           return new autobahn.Error("sync error");
-        case extra.check_error_promise:
+        case extra.checkErrorPromise:
           deferred = global.WAMP_CONNECTION.defer();
           _.defer(function () {
             deferred.resolve(new autobahn.Error("promise error"));
@@ -87,7 +87,7 @@ global.WAMP_CONNECTION.onopen = function () {
         default:
           self.add(_.extend(data, {
             id: parseInt(_.uniqueId()),
-            wampExtra: extra.check_it,
+            wampExtra: extra.checkIt,
             wampOptions: !!details.progress
           }));
           return this.last().toJSON();
@@ -112,18 +112,18 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  Collection_URI = WAMPCollection.extend({
+  CollectionURI = WAMPCollection.extend({
     url: "qweqwe",
-    wampGetUri : function (uri, peer_id, action) {
-      return "custom_uri." + action;
+    wampGetUri : function (uri, peerId, action) {
+      return "customUri." + action;
     },
     wampRead: function () {
-      return [{custom_uri: true}];
+      return [{customUri: true}];
     }
   });
 
-  Collection_Auth = WAMPCollection.extend({
-    url: "auth_collection",
+  CollectionAuth = WAMPCollection.extend({
+    url: "authCollection",
     wampAuth: function (uri, wampMyId, action, kwargs, details) {
       var defer = global.WAMP_CONNECTION.defer();
       defer.resolve(kwargs.data ? kwargs.data.auth : null);
@@ -136,7 +136,7 @@ global.WAMP_CONNECTION.onopen = function () {
 
   m = new Model();
   c = new Collection();
-  c_uri = new Collection_URI();
-  c_auth = new Collection_Auth();
+  cUri = new CollectionURI();
+  cAuth = new CollectionAuth();
 };
 global.WAMP_CONNECTION.open();

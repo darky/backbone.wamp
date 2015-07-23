@@ -12,10 +12,10 @@ describe("backbone.wamp tests", function () {
     });
     global.WAMP_CONNECTION.onopen = function () {
       Model = Backbone.WAMPModel.extend({
-        urlRoot: "test_model"
+        urlRoot: "testModel"
       });
       Collection = Backbone.WAMPCollection.extend({
-        url: "test_collection"
+        url: "testCollection"
       });
       model = new Model();
       collection = new Collection();
@@ -54,13 +54,13 @@ describe("backbone.wamp tests", function () {
     });
     connection.onopen = function () {
       M = Model.extend({
-        urlRoot: "test_model_realm2",
+        urlRoot: "testModelRealm2",
         wampConnection: connection
       });
       m = new M();
       _.delay(function () {
         var registrations = _.filter(connection.session.registrations, function (reg) {
-          return !!reg.procedure.match(/^test_model_realm2/);
+          return !!reg.procedure.match(/^testModelRealm2/);
         });
         chai.expect(_.all(registrations, function (reg) {
           return reg.session.realm === "realm2";
@@ -82,7 +82,7 @@ describe("backbone.wamp tests", function () {
       chai.expect(_.filter(
         global.WAMP_CONNECTION.session.registrations,
         function (reg) {
-          return !!reg.procedure.match(/^test_model\.browser2/);
+          return !!reg.procedure.match(/^testModel\.browser2/);
         }
       ).length)
       .equal(5);
@@ -93,7 +93,7 @@ describe("backbone.wamp tests", function () {
   it("wampOtherId property", function (done) {
     M = Model.extend({
       wampOtherId: "nodejs2",
-      urlRoot: "test_model2"
+      urlRoot: "testModel2"
     });
     m = new M();
     m.fetch({
@@ -108,14 +108,14 @@ describe("backbone.wamp tests", function () {
   it("wampGetUri property", function (done) {
     C = Collection.extend({
       url: "qweqwe",
-      wampGetUri: function (uri, peer_id, action) {
-        return "custom_uri." + action;
+      wampGetUri: function (uri, peerId, action) {
+        return "customUri." + action;
       }
     });
     c = new C();
     c.fetch({
       success: function (c) {
-        chai.expect(c.at(0).get("custom_uri"))
+        chai.expect(c.at(0).get("customUri"))
         .true;
         done();
       }
@@ -270,7 +270,7 @@ describe("backbone.wamp tests", function () {
     });
     collection.create({a: 1}, {
       wampExtra: {
-        check_it: true
+        checkIt: true
       }
     })
   });
@@ -301,7 +301,7 @@ describe("backbone.wamp tests", function () {
         done();
       },
       wampExtra: {
-        check_success_promise: true
+        checkSuccessPromise: true
       }
     });
   });
@@ -312,7 +312,7 @@ describe("backbone.wamp tests", function () {
         done();
       },
       wampExtra: {
-        check_error: true
+        checkError: true
       }
     });
   });
@@ -323,7 +323,7 @@ describe("backbone.wamp tests", function () {
         done();
       },
       wampExtra: {
-        check_error_promise: true
+        checkErrorPromise: true
       }
     });
   });
@@ -341,7 +341,7 @@ describe("backbone.wamp tests", function () {
       id: null
     }, {
       wampExtra: {
-        check_error: true
+        checkError: true
       }
     }).then(_.noop, function () {
       done();
@@ -376,7 +376,7 @@ describe("backbone.wamp tests", function () {
 
   it("auth not passed", function (done) {
     C = Collection.extend({
-      url: "auth_collection"
+      url: "authCollection"
     });
     c = new C();
     c.fetch({
@@ -390,7 +390,7 @@ describe("backbone.wamp tests", function () {
 
   it("auth passed", function (done) {
     C = Collection.extend({
-      url: "auth_collection"
+      url: "authCollection"
     });
     c = new C();
     c.fetch({
