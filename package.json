@@ -23,8 +23,10 @@
     "gulp"                   : "3.9.0",
     "gulp-mocha-phantomjs"   : "0.8.0",
     "karma"                  : "0.13.3",
+    "karma-chai"             : "0.1.0",
     "karma-coverage"         : "0.4.2",
     "karma-firefox-launcher" : "0.1.6",
+    "karma-mocha"            : "0.2.0",
     "karma-qunit"            : "0.1.4"
   },
   "scripts": {

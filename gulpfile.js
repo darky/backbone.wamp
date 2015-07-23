@@ -4,8 +4,7 @@
 var _ = require("underscore"),
   gulp = require("gulp"),
   exec = require("child_process").exec,
-  KarmaServer = require("karma").Server,
-  mocha_phantomjs = require("gulp-mocha-phantomjs");
+  KarmaServer = require("karma").Server;
 
 
 /* ******************
@@ -54,16 +53,35 @@ gulp.task("test-backbone", function (cb) {
   }, cb).start();
 });
 
-gulp.task("test-own-crossbar", function (cb) {
-  exec("crossbar start &");
-  _.delay(cb, 10000);
-});
-
-gulp.task("test-own", ["test-own-crossbar"], function (cb) {
-  var stream = mocha_phantomjs();
-  stream.write({path: "http://127.0.0.1:9000/test/"});
-  stream.end();
-  return stream;
+gulp.task("test-own", function (cb) {
+  exec("crossbar start", {timeout: 25000});
+  _.delay(function () {
+    new KarmaServer({
+      browsers: ["Firefox"],
+      coverageReporter: {
+        dir: "coverage-own",
+        subdir: ".",
+        type: "json"
+      },
+      files: [
+        "bower_components/async/lib/async.js",
+        "bower_components/autobahn/autobahn.js",
+        "bower_components/underscore/underscore.js",
+        "bower_components/jquery/dist/jquery.js",
+        "bower_components/backbone/backbone.js",
+        "bower_components/q/q.js",
+        "backbone.wamp.js",
+        "bower_components/requirejs/require.js",
+        "test/browser.js"
+      ],
+      frameworks: ["chai", "mocha"],
+      preprocessors: {
+        "backbone.wamp.js": "coverage"
+      },
+      reporters: ["progress", "coverage"],
+      singleRun: true
+    }, cb).start();
+  }, 10000);
 });
 
 
