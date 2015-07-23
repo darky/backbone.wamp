@@ -4,8 +4,8 @@
 
 var autobahn = require("autobahn"),
   _ = require("underscore"),
-  WAMPModel = require("../backbone.wamp.js").Model,
-  WAMPCollection = require("../backbone.wamp.js").Collection;
+  WampModel = require("../backbone.wamp.js").Model,
+  WampCollection = require("../backbone.wamp.js").Collection;
 
 global.WAMP_CONNECTION = new autobahn.Connection({
   realm: "realm1",
@@ -13,7 +13,7 @@ global.WAMP_CONNECTION = new autobahn.Connection({
 });
 global.WAMP_MY_ID = "nodejs";
 global.WAMP_CONNECTION.onopen = function () {
-  new WAMPModel.extend({
+  new WampModel.extend({
     urlRoot: "testModel",
     wampRead: function () {
       return this.toJSON();
@@ -45,7 +45,7 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  new WAMPCollection.extend({
+  new WampCollection.extend({
     url: "testCollection",
     wampRead: function (options) {
       var extra = options.extra;
@@ -109,7 +109,7 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  new WAMPCollection.extend({
+  new WampCollection.extend({
     url: "qweqwe",
     wampGetUri: function (uri, peerId, action) {
       return "customUri." + action;
@@ -119,7 +119,7 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  new WAMPCollection.extend({
+  new WampCollection.extend({
     url: "authCollection",
     wampAuth: function (uri, wampMyId, action, kwargs, details) {
       var defer = global.WAMP_CONNECTION.defer();

@@ -94,7 +94,7 @@
         },
 
 
-        WAMPModel = Backbone.Model.extend({
+        WampModel = Backbone.Model.extend({
           constructor: function (attributes, options) {
             if (options == null) {
               options = {};
@@ -115,12 +115,12 @@
           }
         }),
 
-        WAMPCollection = Backbone.Collection.extend({
+        WampCollection = Backbone.Collection.extend({
           constructor: function () {
             Backbone.Collection.apply(this, arguments);
             attachHandlers.call(this, "url");
           },
-          model: WAMPModel,
+          model: WampModel,
           sync: function (method, collection, options) {
             if (options == null) {
               options = {};
@@ -185,16 +185,16 @@
       };
 
       return {
-        Model: WAMPModel,
-        Collection: WAMPCollection
+        Model: WampModel,
+        Collection: WampCollection
       };
     };
 
   if (typeof define === "function" && define.amd) {
     define(["underscore", "backbone", "autobahn"], function (_, Backbone, autobahn) {
       imported = factory(_, Backbone, autobahn);
-      globalVar.Backbone.WAMPModel = imported.Model;
-      globalVar.Backbone.WAMPCollection = imported.Collection;
+      globalVar.Backbone.WampModel = imported.Model;
+      globalVar.Backbone.WampCollection = imported.Collection;
     });
   } else if (typeof module !== "undefined" && module.exports) {
     module.exports = factory(
@@ -204,8 +204,8 @@
     );
   } else {
     imported = factory(globalVar._, globalVar.Backbone, globalVar.autobahn);
-    globalVar.Backbone.WAMPModel = imported.Model;
-    globalVar.Backbone.WAMPCollection = imported.Collection;
+    globalVar.Backbone.WampModel = imported.Model;
+    globalVar.Backbone.WampCollection = imported.Collection;
   }
 
 })();

@@ -11,10 +11,10 @@ describe("backbone.wamp tests", function () {
       url: "ws://127.0.0.1:9000/ws"
     });
     global.WAMP_CONNECTION.onopen = function () {
-      Model = Backbone.WAMPModel.extend({
+      Model = Backbone.WampModel.extend({
         urlRoot: "testModel"
       });
-      Collection = Backbone.WAMPCollection.extend({
+      Collection = Backbone.WampCollection.extend({
         url: "testCollection"
       });
       model = new Model();
