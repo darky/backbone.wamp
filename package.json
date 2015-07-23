@@ -20,9 +20,12 @@
     "underscore" : "1.8.3"
   },
   "devDependencies": {
-    "gulp"                 : "3.9.0",
-    "gulp-mocha-phantomjs" : "0.6.1",
-    "gulp-qunit"           : "1.2.1"
+    "gulp"                   : "3.9.0",
+    "gulp-mocha-phantomjs"   : "0.8.0",
+    "karma"                  : "0.13.3",
+    "karma-coverage"         : "0.4.2",
+    "karma-firefox-launcher" : "0.1.6",
+    "karma-qunit"            : "0.1.4"
   },
   "scripts": {
     "test": "./node_modules/.bin/gulp"
