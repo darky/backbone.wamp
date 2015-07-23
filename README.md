@@ -1,5 +1,7 @@
 # Backbone.WAMP
 
+[![](https://travis-ci.org/darrrk/backbone.wamp.svg?branch=master)](https://travis-ci.org/darrrk/backbone.wamp)
+
 Backbone.WAMP replace your classic **REST** protocol, based on **AJAX**, to modern **WAMP** protocol, based on **WebSockets**.
 You can read more about <a href=http://wamp.ws target=_blank>here</a>. This allows make your *Backbone.Model* / *Backbone.Collection* with next characteristics:
 
