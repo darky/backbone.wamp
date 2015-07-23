@@ -61,7 +61,7 @@
       {
          "type": "guest",
          "executable": "node",
-         "arguments": ["tmp/test/node.js"],
+         "arguments": ["test/node.js"],
          "options": {
             "workdir": "../",
             "watch": {
