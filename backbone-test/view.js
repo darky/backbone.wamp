@@ -357,8 +357,8 @@
     });
 
     var view = new View({
-      model: new Backbone.WAMP_Model,
-      collection: new Backbone.WAMP_Collection
+      model: new Backbone.WAMPModel,
+      collection: new Backbone.WAMPCollection
     });
 
     view.stopListening();
