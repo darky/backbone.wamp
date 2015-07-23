@@ -1,6 +1,9 @@
+/* eslint-env node */
+
+"use strict";
+
 var autobahn = require("autobahn"),
   _ = require("underscore"),
-  Backbone = require("backbone"),
   WAMPModel = require("../backbone.wamp.js").Model,
   WAMPCollection = require("../backbone.wamp.js").Collection;
 
@@ -10,12 +13,9 @@ global.WAMP_CONNECTION = new autobahn.Connection({
 });
 global.WAMP_MY_ID = "nodejs";
 global.WAMP_CONNECTION.onopen = function () {
-  var Model, Collection, CollectionURI, CollectionAuth,
-    m, c, cUri, cAuth;
-
-  Model = WAMPModel.extend({
+  new WAMPModel.extend({
     urlRoot: "testModel",
-    wampRead: function (options) {
+    wampRead: function () {
       return this.toJSON();
     },
     wampCreate: function (options) {
@@ -25,30 +25,27 @@ global.WAMP_CONNECTION.onopen = function () {
         return new autobahn.Error("sync error");
       }
       this.set(_.extend(data, {
-        id: parseInt(_.uniqueId())
+        id: parseInt(_.uniqueId(), 10)
       }));
-      return this.toJSON()
+      return this.toJSON();
     },
     wampUpdate: function (options) {
-      var data = options.data,
-        extra = options.extra;
+      var data = options.data;
       this.set(_.extend(data, {type: "update"}));
       return this.toJSON();
     },
     wampPatch: function (options) {
-      var data = options.data,
-        extra = options.extra;
+      var data = options.data;
       this.set(_.extend(data, {type: "patch"}));
-      return this.toJSON()
+      return this.toJSON();
     },
-    wampDelete: function (options) {
-      var extra = options.extra;
+    wampDelete: function () {
       this.set({});
       return {};
     }
   });
 
-  Collection = WAMPCollection.extend({
+  new WAMPCollection.extend({
     url: "testCollection",
     wampRead: function (options) {
       var extra = options.extra;
@@ -69,7 +66,7 @@ global.WAMP_CONNECTION.onopen = function () {
           deferred = global.WAMP_CONNECTION.defer();
           _.defer(function () {
             self.add(_.extend(data, {
-              id: parseInt(_.uniqueId()),
+              id: parseInt(_.uniqueId(), 10),
               wampExtra: extra.checkIt,
               wampOptions: !!details.progress
             }));
@@ -86,7 +83,7 @@ global.WAMP_CONNECTION.onopen = function () {
           return deferred.promise;
         default:
           self.add(_.extend(data, {
-            id: parseInt(_.uniqueId()),
+            id: parseInt(_.uniqueId(), 10),
             wampExtra: extra.checkIt,
             wampOptions: !!details.progress
           }));
@@ -112,9 +109,9 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  CollectionURI = WAMPCollection.extend({
+  new WAMPCollection.extend({
     url: "qweqwe",
-    wampGetUri : function (uri, peerId, action) {
+    wampGetUri: function (uri, peerId, action) {
       return "customUri." + action;
     },
     wampRead: function () {
@@ -122,7 +119,7 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  CollectionAuth = WAMPCollection.extend({
+  new WAMPCollection.extend({
     url: "authCollection",
     wampAuth: function (uri, wampMyId, action, kwargs, details) {
       var defer = global.WAMP_CONNECTION.defer();
@@ -130,13 +127,8 @@ global.WAMP_CONNECTION.onopen = function () {
       return defer.promise;
     },
     wampRead: function () {
-      return [{auth : true}];
+      return [{auth: true}];
     }
   });
-
-  m = new Model();
-  c = new Collection();
-  cUri = new CollectionURI();
-  cAuth = new CollectionAuth();
 };
 global.WAMP_CONNECTION.open();

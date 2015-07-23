@@ -1,8 +1,13 @@
+/* eslint-env node */
+
+"use strict";
+
 /* *****************
 #    DEFINE-VARS
 # *************** */
 var _ = require("underscore"),
   gulp = require("gulp"),
+  eslint = require("gulp-eslint"),
   exec = require("child_process").exec,
   KarmaServer = require("karma").Server;
 
@@ -88,6 +93,9 @@ gulp.task("test-own", function (cb) {
 /* ***********
 #    LINT
 # ********* */
-gulp.task("lint", function (cb) {
-  cb();
+gulp.task("lint", function () {
+  return gulp.src(["*.js", "test/*.js"])
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failOnError());
 });
