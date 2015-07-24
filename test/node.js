@@ -13,7 +13,9 @@ global.WAMP_CONNECTION = new autobahn.Connection({
 });
 global.WAMP_MY_ID = "nodejs";
 global.WAMP_CONNECTION.onopen = function () {
-  new WampModel.extend({
+  var Model, Collection, CollectionUri, CollectionAuth, obj = {};
+
+  Model = WampModel.extend({
     urlRoot: "testModel",
     wampRead: function () {
       return this.toJSON();
@@ -45,7 +47,7 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  new WampCollection.extend({
+  Collection = WampCollection.extend({
     url: "testCollection",
     wampRead: function (options) {
       var extra = options.extra;
@@ -109,7 +111,7 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  new WampCollection.extend({
+  CollectionUri = WampCollection.extend({
     url: "qweqwe",
     wampGetUri: function (uri, peerId, action) {
       return "customUri." + action;
@@ -119,7 +121,7 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
-  new WampCollection.extend({
+  CollectionAuth = WampCollection.extend({
     url: "authCollection",
     wampAuth: function (uri, wampMyId, action, kwargs, details) {
       var defer = global.WAMP_CONNECTION.defer();
@@ -130,5 +132,12 @@ global.WAMP_CONNECTION.onopen = function () {
       return [{auth: true}];
     }
   });
+
+  _.each(
+    [Model, Collection, CollectionUri, CollectionAuth],
+    function (Klass) {
+      obj[Klass] = new Klass();
+    }
+  );
 };
 global.WAMP_CONNECTION.open();
