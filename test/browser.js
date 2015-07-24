@@ -1,4 +1,9 @@
-describe("backbone.wamp tests", function () {
+/* eslint-env browser, mocha, jquery */
+/* global _, async, autobahn, Backbone, chai, Q */
+
+describe("backbone.wamp tests", function () { // eslint-disable-line
+  "use strict";
+
   var global = typeof global !== "undefined" ? global : window,
     Model, Collection, model, collection;
 
@@ -25,6 +30,7 @@ describe("backbone.wamp tests", function () {
   });
 
   it("Not register CRUD hooks", function (done) {
+    var c, C, m, M;
     chai.expect(global.WAMP_CONNECTION.session.registrations.length)
     .equal(10);
     M = Model.extend({
@@ -53,6 +59,7 @@ describe("backbone.wamp tests", function () {
       url: "ws://127.0.0.1:9000/ws"
     });
     connection.onopen = function () {
+      var m, M;
       M = Model.extend({
         urlRoot: "testModelRealm2",
         wampConnection: connection
@@ -65,15 +72,16 @@ describe("backbone.wamp tests", function () {
         chai.expect(_.all(registrations, function (reg) {
           return reg.session.realm === "realm2";
         }))
-        .true
+        .equal(true);
         done();
-      }, 1500)
+      }, 1500);
       connection.open();
     };
     connection.open();
   });
 
   it("wampMyId property", function (done) {
+    var m, M;
     M = Model.extend({
       wampMyId: "browser2"
     });
@@ -91,13 +99,14 @@ describe("backbone.wamp tests", function () {
   });
 
   it("wampOtherId property", function (done) {
+    var m, M;
     M = Model.extend({
       wampOtherId: "nodejs2",
       urlRoot: "testModel2"
     });
     m = new M();
     m.fetch({
-      error: function (m, err, opts) {
+      error: function (mod, err, opts) {
         chai.expect(opts.wampOtherId)
         .equal("nodejs2");
         done();
@@ -106,6 +115,7 @@ describe("backbone.wamp tests", function () {
   });
 
   it("wampGetUri property", function (done) {
+    var c, C;
     C = Collection.extend({
       url: "qweqwe",
       wampGetUri: function (uri, peerId, action) {
@@ -114,18 +124,16 @@ describe("backbone.wamp tests", function () {
     });
     c = new C();
     c.fetch({
-      success: function (c) {
-        chai.expect(c.at(0).get("customUri"))
-        .true;
+      success: function () {
+        chai.expect(c.at(0).get("customUri")).equal(true);
         done();
       }
     });
   });
 
   it("model create", function (done) {
-    model.once("sync", function (model, resp, opts) {
-      chai.expect(model.id)
-      .ok;
+    model.once("sync", function (m, resp, opts) {
+      chai.expect(!!m.id).equal(true);
       chai.expect(opts.wampMyId)
       .equal("browser");
       done();
@@ -134,50 +142,38 @@ describe("backbone.wamp tests", function () {
   });
 
   it("model update", function (done) {
-    model.once("sync", function (model, resp, opts) {
-      chai.expect(model.get("a"))
-      .equal(2);
-      chai.expect(model.get("type"))
-      .equal("update");
-      chai.expect(opts.wampModelId)
-      .ok;
-      chai.expect(opts.wampMyId)
-      .equal("browser")
+    model.once("sync", function (m, resp, opts) {
+      chai.expect(m.get("a")).equal(2);
+      chai.expect(m.get("type")).equal("update");
+      chai.expect(!!opts.wampModelId).equal(true);
+      chai.expect(opts.wampMyId).equal("browser");
       done();
     });
     model.save({a: 2});
   });
 
   it("model patch", function (done) {
-    model.once("sync", function (model, resp, opts) {
-      chai.expect(model.get("b"))
-      .equal(6);
-      chai.expect(model.get("type"))
-      .equal("patch");
-      chai.expect(opts.wampModelId)
-      .ok;
-      chai.expect(opts.wampMyId)
-      .equal("browser");
-      chai.expect(opts.patch)
-      .true;
+    model.once("sync", function (m, resp, opts) {
+      chai.expect(m.get("b")).equal(6);
+      chai.expect(m.get("type")).equal("patch");
+      chai.expect(!!opts.wampModelId).equal(true);
+      chai.expect(opts.wampMyId).equal("browser");
+      chai.expect(opts.patch).equal(true);
       done();
     });
     model.save({
       b: 6
     }, {
       patch: true
-    })
+    });
   });
 
   it("model fetch", function (done) {
     var data = model.toJSON();
     model.once("sync", function (m, resp, opts) {
-      chai.expect(opts.wampModelId)
-      .ok;
-      chai.expect(opts.wampMyId)
-      .equal("browser");
-      chai.expect(data)
-      .deep.equal(resp);
+      chai.expect(!!opts.wampModelId).equal(true);
+      chai.expect(opts.wampMyId).equal("browser");
+      chai.expect(data).deep.equal(resp);
       done();
     });
     model.fetch();
@@ -185,8 +181,7 @@ describe("backbone.wamp tests", function () {
 
   it("model destroy", function (done) {
     model.once("destroy", function (m, resp, opts) {
-      chai.expect(opts.wampModelId)
-      .ok;
+      chai.expect(!!opts.wampModelId).equal(true);
       chai.expect(opts.wampMyId)
       .equal("browser");
       chai.expect(_.size(resp))
@@ -198,7 +193,7 @@ describe("backbone.wamp tests", function () {
 
   it("collection model create", function (done) {
     collection.once("sync", function () {
-      chai.expect(collection.first().id).ok;
+      chai.expect(!!collection.first().id).equal(true);
       chai.expect(collection.first().get("a")).equal(1);
       done();
     });
@@ -209,7 +204,7 @@ describe("backbone.wamp tests", function () {
     collection.once("sync", function (m, resp, opts) {
       chai.expect(collection.at(0).get("b")).equal(1);
       chai.expect(collection.at(0).get("type")).equal("update");
-      chai.expect(opts.wampModelId).ok;
+      chai.expect(!!opts.wampModelId).equal(true);
       chai.expect(opts.wampMyId).equal("browser");
       done();
     });
@@ -220,8 +215,8 @@ describe("backbone.wamp tests", function () {
     collection.once("sync", function (m, resp, opts) {
       chai.expect(collection.at(0).get("b")).equal(2);
       chai.expect(collection.at(0).get("type")).equal("patch");
-      chai.expect(opts.patch).true;
-      chai.expect(opts.wampModelId).ok;
+      chai.expect(opts.patch).equal(true);
+      chai.expect(!!opts.wampModelId).equal(true);
       chai.expect(opts.wampMyId).equal("browser");
       done();
     });
@@ -235,7 +230,7 @@ describe("backbone.wamp tests", function () {
   it("collection model fetch", function (done) {
     var data = collection.at(0).toJSON();
     collection.once("sync", function (c, resp, opts) {
-      chai.expect(opts.wampModelId).ok;
+      chai.expect(!!opts.wampModelId).equal(true);
       chai.expect(opts.wampMyId).equal("browser");
       chai.expect(data).deep.equal(resp);
       done();
@@ -255,7 +250,7 @@ describe("backbone.wamp tests", function () {
 
   it("collection model destroy", function (done) {
     collection.once("destroy", function (c, resp, opts) {
-      chai.expect(opts.wampModelId).ok;
+      chai.expect(!!opts.wampModelId).equal(true);
       chai.expect(opts.wampMyId).equal("browser");
       chai.expect(collection.length).equal(0);
       done();
@@ -265,24 +260,24 @@ describe("backbone.wamp tests", function () {
 
   it("wampExtra", function (done) {
     collection.once("sync", function () {
-      chai.expect(collection.last().get("wampExtra")).true;
+      chai.expect(collection.last().get("wampExtra")).equal(true);
       done();
     });
     collection.create({a: 1}, {
       wampExtra: {
         checkIt: true
       }
-    })
+    });
   });
 
   it("wampOptions", function (done) {
     collection.once("sync", function () {
-      chai.expect(collection.last().get("wampOptions")).true;
+      chai.expect(collection.last().get("wampOptions")).equal(true);
       done();
     });
     collection.create({a: 1}, {
       wampOptions: {
-        receive_progress: true
+        receive_progress: true // eslint-disable-line
       }
     });
   });
@@ -355,19 +350,19 @@ describe("backbone.wamp tests", function () {
       return test.title === "success promise" || test.title === "error promise";
     });
     async.eachSeries([{
-      use_deferred: $.Deferred
+      use_deferred: $.Deferred // eslint-disable-line
     }, {
-      use_deferred: Q.defer
+      use_deferred: Q.defer // eslint-disable-line
     }, {
-      use_es6_promises: true
+      use_es6_promises: true // eslint-disable-line
     }], function (opts, next) {
       global.WAMP_CONNECTION = new autobahn.Connection(_.extend({
         realm: "realm1",
         url: "ws://127.0.0.1:9000/ws"
       }, opts));
       global.WAMP_CONNECTION.onopen = function () {
-        async.eachSeries(tests, function (test, next) {
-          test.fn.call(self, next);
+        async.eachSeries(tests, function (test, nextTest) {
+          test.fn.call(self, nextTest);
         }, next);
       };
       global.WAMP_CONNECTION.open();
@@ -375,20 +370,22 @@ describe("backbone.wamp tests", function () {
   });
 
   it("auth not passed", function (done) {
+    var c, C;
     C = Collection.extend({
       url: "authCollection"
     });
     c = new C();
     c.fetch({
-      error: function (c, obj) {
+      error: function (col, obj) {
         chai.expect(obj.error)
         .equal("Auth error");
         done();
       }
-    })
+    });
   });
 
   it("auth passed", function (done) {
+    var c, C;
     C = Collection.extend({
       url: "authCollection"
     });
@@ -397,7 +394,7 @@ describe("backbone.wamp tests", function () {
       data: {
         auth: true
       },
-      success: function (c) {
+      success: function () {
         chai.expect(c.at(0).get("auth"))
         .equal(true);
         done();

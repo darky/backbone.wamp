@@ -1,3 +1,5 @@
+/* eslint-env amd, browser, node */
+
 (function () {
   "use strict";
 
@@ -13,6 +15,14 @@
       },
 
         actions = _.values(actionMap),
+
+        capitalizeFirstLetter = function (string) {
+          return string.charAt(0).toUpperCase() + string.slice(1);
+        },
+
+        wampGetUri = function (uri, peerId, action) {
+          return uri + "." + peerId + "." + action;
+        },
 
         attachHandlers = function (uriKey) {
           var self = this,
@@ -32,7 +42,7 @@
             } else if (_.isObject(defer.promise)) {
               return defer.promise;
             }
-          }
+          };
           _.each(actions, function (action) {
             connection.session.register(
               getUri.call(self, uri, wampMyId, action),
@@ -46,16 +56,20 @@
                       kwargs.data = JSON.parse(kwargs.data);
                     } catch (e) {}
                     if (_.isFunction(self["wamp" + capitalizeFirstLetter(action)])) {
-                      actionResult = self["wamp" + capitalizeFirstLetter(action)](kwargs, details);
+                      actionResult = self["wamp" + capitalizeFirstLetter(action)](
+                        kwargs, details
+                      );
                     }
                     if (actionResult != null && typeof actionResult.then === "function") {
-                      actionResult.then(function(result){
+                      actionResult.then(function (result) {
                         defer.resolve(result);
                       });
                     } else if (actionResult != null) {
                       defer.resolve(actionResult);
                     } else {
-                      defer.resolve(new autobahn.Error("Not defined procedure for action: " + action));
+                      defer.resolve(
+                        new autobahn.Error("Not defined procedure for action: " + action)
+                      );
                     }
                   } else {
                     defer.resolve(new autobahn.Error("Auth error"));
@@ -73,24 +87,20 @@
 
         backboneAjaxOriginal = Backbone.ajax,
 
-        capitalizeFirstLetter = function (string) {
-          return string.charAt(0).toUpperCase() + string.slice(1);
-        },
-
         mixinWampOptions = function (method, entity, options) {
-          var collectionWampMyId = entity.collection ? entity.collection.wampMyId : null,
-            collectionWampOtherId = entity.collection ? entity.collection.wampOtherId : null;
+          var collectionWampMyId = entity.collection ? entity.collection.wampMyId
+            : null,
+            collectionWampOtherId = entity.collection ? entity.collection.wampOtherId
+              : null;
           return _.extend(options, {
             wamp: true,
             wampConnection: entity.wampConnection,
-            wampGetUri: _.bind(entity.wampGetUri || globalVar.WAMP_GET_URI || wampGetUri, entity),
+            wampGetUri: _.bind(
+              entity.wampGetUri || globalVar.WAMP_GET_URI || wampGetUri, entity
+            ),
             wampMyId: collectionWampMyId || entity.wampMyId || globalVar.WAMP_MY_ID,
             wampOtherId: collectionWampOtherId || entity.wampOtherId || globalVar.WAMP_OTHER_ID
           });
-        },
-
-        wampGetUri = function (uri, peerId, action) {
-          return uri + "." + peerId + "." + action;
         },
 
 
@@ -139,7 +149,9 @@
         }
         connection = ajaxOptions.wampConnection || globalVar.WAMP_CONNECTION;
         if (ajaxOptions.wampModelId) {
-          uri = ajaxOptions.url.replace(new RegExp("/" + ajaxOptions.wampModelId + "$"), "");
+          uri = ajaxOptions.url.replace(
+            new RegExp("/" + ajaxOptions.wampModelId + "$"), ""
+          );
         } else {
           uri = ajaxOptions.url;
         }
@@ -164,7 +176,7 @@
           ajaxOptions.wampOptions
         )
         .then(function (obj) {
-          var objError = obj ? obj.error : null
+          var objError = obj ? obj.error : null;
           if (objError) {
             ajaxOptions.error(obj);
             defer.reject(obj);
@@ -207,5 +219,4 @@
     globalVar.Backbone.WampModel = imported.Model;
     globalVar.Backbone.WampCollection = imported.Collection;
   }
-
-})();
+}());
