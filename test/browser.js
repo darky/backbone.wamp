@@ -402,4 +402,21 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       }
     });
   });
+
+  it("check AMD", function (done) {
+    requirejs.config({
+      paths: {
+        "autobahn": "base/bower_components/autobahn/autobahn",
+        "backbone": "base/bower_components/backbone/backbone",
+        "jquery": "base/bower_components/jquery/dist/jquery",
+        "underscore": "base/bower_components/underscore/underscore"
+      }
+    });
+
+    require(["base/backbone.wamp.js"], function (WampClasses) {
+      chai.expect(WampClasses.Model).equal(Backbone.WampModel);
+      chai.expect(WampClasses.Collection).equal(Backbone.WampCollection);
+      done();
+    });
+  });
 });
