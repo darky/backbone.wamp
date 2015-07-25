@@ -123,7 +123,7 @@ global.WAMP_CONNECTION.onopen = function () {
 
   CollectionAuth = WampCollection.extend({
     url: "authCollection",
-    wampAuth: function (uri, wampMyId, action, kwargs, details) {
+    wampAuth: function (uriInfo, kwargs) {
       var defer = global.WAMP_CONNECTION.defer();
       defer.resolve(kwargs.data ? kwargs.data.auth : null);
       return defer.promise;

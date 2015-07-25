@@ -55,7 +55,14 @@
               function (args, kwargs, details) {
                 var defer = connection.defer(),
                   wampAuth = getWampAuth(self);
-                wampAuth(uri, wampMyId, action, kwargs, details)
+                wampAuth(
+                  {
+                    action: action,
+                    uri: uri,
+                    wampMyId: wampMyId
+                  },
+                  kwargs, details
+                )
                 .then(function (isAuth) {
                   if (isAuth === true) {
                     try {
