@@ -30,21 +30,22 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
   });
 
   it("Not register CRUD hooks", function (done) {
-    var c, C, m, M;
+    var obj = {},
+      M = Model.extend({
+        urlRoot: null
+      }),
+      C = Collection.extend({
+        url: null
+      });
     chai.expect(global.WAMP_CONNECTION.session.registrations.length)
     .equal(10);
-    M = Model.extend({
-      urlRoot: null
+    _.each([M, C, Model, Collection], function (Klass) {
+      if (Klass === Model || Klass === Collection) {
+        global.WAMP_MY_ID = null;
+      }
+      obj[Klass] = new Klass();
     });
-    m = new M();
-    C = Collection.extend({
-      url: null
-    });
-    c = new C();
-    global.WAMP_MY_ID = null;
-    m = new Model();
-    c = new Collection();
-    c.add({a: 1});
+    obj[Collection].add({a: 1});
     global.WAMP_MY_ID = "browser";
     _.delay(function () {
       chai.expect(global.WAMP_CONNECTION.session.registrations.length)
@@ -59,7 +60,7 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       url: "ws://127.0.0.1:9000/ws"
     });
     connection.onopen = function () {
-      var m, M;
+      var m, M; // eslint-disable-line no-unused-vars, no-inline-comments
       M = Model.extend({
         urlRoot: "testModelRealm2",
         wampConnection: connection
@@ -81,7 +82,7 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
   });
 
   it("wampMyId property", function (done) {
-    var m, M;
+    var m, M; // eslint-disable-line no-unused-vars, no-inline-comments
     M = Model.extend({
       wampMyId: "browser2"
     });

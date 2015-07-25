@@ -4,7 +4,6 @@
   "use strict";
 
   var globalVar = typeof global !== "undefined" ? global : window,
-    imported,
     factory = function (_, Backbone, autobahn) {
       var actionMap = {
         POST: "create",
@@ -18,6 +17,14 @@
 
         capitalizeFirstLetter = function (string) {
           return string.charAt(0).toUpperCase() + string.slice(1);
+        },
+
+        getPromise = function (defer) {
+          if (_.isFunction(defer.promise)) {
+            return defer;
+          } else if (_.isObject(defer.promise)) {
+            return defer.promise;
+          }
         },
 
         wampGetUri = function (uri, peerId, action) {
@@ -37,11 +44,7 @@
           wampAuth = this.wampAuth || globalVar.WAMP_AUTH || function () {
             var defer = connection.defer();
             defer.resolve(true);
-            if (_.isFunction(defer.promise)) {
-              return defer;
-            } else if (_.isObject(defer.promise)) {
-              return defer.promise;
-            }
+            return getPromise(defer);
           };
           _.each(actions, function (action) {
             connection.session.register(
@@ -50,22 +53,16 @@
                 var defer = connection.defer();
                 wampAuth(uri, wampMyId, action, kwargs, details)
                 .then(function (isAuth) {
-                  var actionResult;
                   if (isAuth === true) {
                     try {
                       kwargs.data = JSON.parse(kwargs.data);
-                    } catch (e) {}
+                    } catch (e) {} // eslint-disable-line
                     if (_.isFunction(self["wamp" + capitalizeFirstLetter(action)])) {
-                      actionResult = self["wamp" + capitalizeFirstLetter(action)](
-                        kwargs, details
+                      defer.resolve(
+                        self["wamp" + capitalizeFirstLetter(action)](
+                          kwargs, details
+                        )
                       );
-                    }
-                    if (actionResult != null && typeof actionResult.then === "function") {
-                      actionResult.then(function (result) {
-                        defer.resolve(result);
-                      });
-                    } else if (actionResult != null) {
-                      defer.resolve(actionResult);
                     } else {
                       defer.resolve(
                         new autobahn.Error("Not defined procedure for action: " + action)
@@ -75,11 +72,7 @@
                     defer.resolve(new autobahn.Error("Auth error"));
                   }
                 });
-                if (_.isFunction(defer.promise)) {
-                  return defer;
-                } else if (_.isObject(defer.promise)) {
-                  return defer.promise;
-                }
+                return getPromise(defer);
               }
             );
           });
@@ -189,12 +182,11 @@
           defer.reject(obj);
         });
 
-        if (_.isFunction(defer.promise)) {
-          return defer;
-        } else if (_.isObject(defer.promise)) {
-          return defer.promise;
-        }
+        return getPromise(defer);
       };
+
+      Backbone.WampModel = WampModel;
+      Backbone.WampCollection = WampCollection;
 
       return {
         Model: WampModel,
@@ -204,9 +196,7 @@
 
   if (typeof define === "function" && define.amd) {
     define(["underscore", "backbone", "autobahn"], function (_, Backbone, autobahn) {
-      imported = factory(_, Backbone, autobahn);
-      globalVar.Backbone.WampModel = imported.Model;
-      globalVar.Backbone.WampCollection = imported.Collection;
+      return factory(_, Backbone, autobahn);
     });
   } else if (typeof module !== "undefined" && module.exports) {
     module.exports = factory(
@@ -215,8 +205,6 @@
       require("autobahn")
     );
   } else {
-    imported = factory(globalVar._, globalVar.Backbone, globalVar.autobahn);
-    globalVar.Backbone.WampModel = imported.Model;
-    globalVar.Backbone.WampCollection = imported.Collection;
+    factory(globalVar._, globalVar.Backbone, globalVar.autobahn);
   }
 }());
