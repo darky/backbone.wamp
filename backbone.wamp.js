@@ -27,6 +27,15 @@
           }
         },
 
+        getWampAuth = function (object) {
+          return object.wampAuth || globalVar.WAMP_AUTH || function () {
+            var connection = object.wampConnection || globalVar.WAMP_CONNECTION,
+              defer = connection.defer();
+            defer.resolve(true);
+            return getPromise(defer);
+          };
+        },
+
         wampGetUri = function (uri, peerId, action) {
           return uri + "." + peerId + "." + action;
         },
@@ -35,22 +44,17 @@
           var self = this,
             uri = _.result(this, uriKey),
             wampMyId = _.result(this, "wampMyId") || globalVar.WAMP_MY_ID,
-            connection, getUri, wampAuth;
+            connection = this.wampConnection || globalVar.WAMP_CONNECTION,
+            getUri = this.wampGetUri || globalVar.WAMP_GET_URI || wampGetUri;
           if (!uri || !wampMyId) {
             return;
           }
-          connection = this.wampConnection || globalVar.WAMP_CONNECTION;
-          getUri = this.wampGetUri || globalVar.WAMP_GET_URI || wampGetUri;
-          wampAuth = this.wampAuth || globalVar.WAMP_AUTH || function () {
-            var defer = connection.defer();
-            defer.resolve(true);
-            return getPromise(defer);
-          };
           _.each(actions, function (action) {
             connection.session.register(
               getUri.call(self, uri, wampMyId, action),
               function (args, kwargs, details) {
-                var defer = connection.defer();
+                var defer = connection.defer(),
+                  wampAuth = getWampAuth(self);
                 wampAuth(uri, wampMyId, action, kwargs, details)
                 .then(function (isAuth) {
                   if (isAuth === true) {
@@ -81,18 +85,18 @@
         backboneAjaxOriginal = Backbone.ajax,
 
         mixinWampOptions = function (method, entity, options) {
-          var collectionWampMyId = entity.collection ? entity.collection.wampMyId
-            : null,
-            collectionWampOtherId = entity.collection ? entity.collection.wampOtherId
-              : null;
+          var collectionWampMyId = entity.collection ?
+            entity.collection.wampMyId : entity.wampMyId,
+            collectionWampOtherId = entity.collection ?
+              entity.collection.wampOtherId : entity.wampOtherId;
           return _.extend(options, {
             wamp: true,
             wampConnection: entity.wampConnection,
             wampGetUri: _.bind(
               entity.wampGetUri || globalVar.WAMP_GET_URI || wampGetUri, entity
             ),
-            wampMyId: collectionWampMyId || entity.wampMyId || globalVar.WAMP_MY_ID,
-            wampOtherId: collectionWampOtherId || entity.wampOtherId || globalVar.WAMP_OTHER_ID
+            wampMyId: collectionWampMyId || globalVar.WAMP_MY_ID,
+            wampOtherId: collectionWampOtherId || globalVar.WAMP_OTHER_ID
           });
         },
 
@@ -136,18 +140,14 @@
 
 
       Backbone.ajax = function (ajaxOptions) {
-        var connection, uri, defer;
+        var connection = ajaxOptions.wampConnection || globalVar.WAMP_CONNECTION,
+          uri, defer;
         if (!ajaxOptions.wamp) {
           return backboneAjaxOriginal(ajaxOptions);
         }
-        connection = ajaxOptions.wampConnection || globalVar.WAMP_CONNECTION;
-        if (ajaxOptions.wampModelId) {
-          uri = ajaxOptions.url.replace(
-            new RegExp("/" + ajaxOptions.wampModelId + "$"), ""
-          );
-        } else {
-          uri = ajaxOptions.url;
-        }
+        uri = ajaxOptions.wampModelId ? ajaxOptions.url.replace(
+          new RegExp("/" + ajaxOptions.wampModelId + "$"), ""
+        ) : ajaxOptions.url;
         defer = connection.defer();
         connection.session.call(
           ajaxOptions.wampGetUri(
