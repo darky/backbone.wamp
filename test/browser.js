@@ -1,5 +1,5 @@
-/* eslint-env browser, mocha, jquery */
-/* global _, async, autobahn, Backbone, chai, Q */
+/* eslint-env amd, browser, mocha, jquery */
+/* global _, async, autobahn, Backbone, chai, Q, requirejs */
 
 describe("backbone.wamp tests", function () { // eslint-disable-line
   "use strict";
