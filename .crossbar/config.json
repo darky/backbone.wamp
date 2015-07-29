@@ -60,8 +60,8 @@
       },
       {
          "type": "guest",
-         "executable": "node",
-         "arguments": ["test/node.js"],
+         "executable": "./node_modules/.bin/istanbul",
+         "arguments": ["cover", "--handle-sigint", "--dir", "coverage-node", "--6o56y45f36wmf7f", "test/node.js"],
          "options": {
             "workdir": "../",
             "watch": {

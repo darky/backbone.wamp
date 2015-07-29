@@ -7,15 +7,18 @@
 # *************** */
 var _ = require("underscore"),
   gulp = require("gulp"),
+  CheckCoverage = require("./node_modules/istanbul/lib/command/check-coverage.js"),
+  combineCoverage = require("istanbul-combine"),
   eslint = require("gulp-eslint"),
   exec = require("child_process").exec,
-  KarmaServer = require("karma").Server;
+  KarmaServer = require("karma").Server,
+  ps = require("ps-node");
 
 
 /* ******************
 #    CONCAT-TASKS
 # **************** */
-gulp.task("default", ["test", "lint"]);
+gulp.task("default", ["coverage", "lint"]);
 gulp.task("test", [
     "test-backbone",
     "test-own"
@@ -59,7 +62,7 @@ gulp.task("test-backbone", function (cb) {
 });
 
 gulp.task("test-own", function (cb) {
-  exec("crossbar start", {timeout: 25000});
+  var crossbarProcess = exec("crossbar start");
   _.delay(function () {
     new KarmaServer({
       browsers: ["Firefox"],
@@ -85,8 +88,45 @@ gulp.task("test-own", function (cb) {
       },
       reporters: ["progress", "coverage"],
       singleRun: true
-    }, cb).start();
+    }, function () {
+      ps.lookup({
+        arguments: "--6o56y45f36wmf7f"
+      }, function (err, processes) {
+        process.kill(parseInt(processes[0].pid, 10), "SIGINT");
+        crossbarProcess.kill();
+        cb(err);
+      });
+    }).start();
   }, 10000);
+});
+
+
+/* *************
+#    COVERAGE
+# *********** */
+gulp.task("coverage", ["test"], function (cb) {
+  combineCoverage({
+    pattern: "coverage-*/coverage*.json",
+    reporters: {
+      html: {
+        dir: "coverage"
+      },
+      json: {
+        dir: "coverage"
+      }
+    }
+  }).then(function () {
+    var checker = new CheckCoverage();
+    checker.run([
+      "--remain", "coverage/coverage-final.json",
+      "--statements", "100",
+      "--branches", "100",
+      "--functions", "100",
+      "--lines", "100"
+    ], function (err) {
+      cb(err);
+    });
+  });
 });
 
 
