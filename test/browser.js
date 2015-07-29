@@ -29,6 +29,17 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     global.WAMP_CONNECTION.open();
   });
 
+  it("Native backbone.ajax", function (done) {
+    var C = Backbone.Collection.extend({
+      url: "/qwe"
+    }),
+      c = new C();
+    c.fetch({error: function (col, xhr) {
+      chai.expect(xhr.status).equal(404);
+      done();
+    }});
+  });
+
   it("Not register CRUD hooks", function (done) {
     var obj = {},
       M = Model.extend({
@@ -127,6 +138,23 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     c.fetch({
       success: function () {
         chai.expect(c.at(0).get("customUri")).equal(true);
+        done();
+      }
+    });
+  });
+
+  it("global WAMP_GET_URI", function (done) {
+    var C = Collection.extend({
+      url: "qweqwe"
+    }), c;
+    global.WAMP_GET_URI = function (uri, peerId, action) {
+      return "customUri." + action;
+    };
+    c = new C();
+    c.fetch({
+      success: function () {
+        chai.expect(c.at(0).get("customUri")).equal(true);
+        global.WAMP_GET_URI = null;
         done();
       }
     });
@@ -398,6 +426,21 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       success: function () {
         chai.expect(c.at(0).get("auth"))
         .equal(true);
+        done();
+      }
+    });
+  });
+
+  it("Not defined for action", function (done) {
+    var C = Collection.extend({
+      url: "noAction"
+    }),
+      c = new C();
+    c.fetch({
+      error: function (col, resp) {
+        chai.expect(resp.error).equal(
+          "Not defined procedure for action: read"
+        );
         done();
       }
     });

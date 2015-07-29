@@ -13,7 +13,9 @@ global.WAMP_CONNECTION = new autobahn.Connection({
 });
 global.WAMP_MY_ID = "nodejs";
 global.WAMP_CONNECTION.onopen = function () {
-  var Model, Collection, CollectionUri, CollectionAuth, obj = {};
+  var Model, Collection, CollectionUri, CollectionAuth,
+    CollectionNoAction,
+    obj = {};
 
   Model = WampModel.extend({
     urlRoot: "testModel",
@@ -133,8 +135,12 @@ global.WAMP_CONNECTION.onopen = function () {
     }
   });
 
+  CollectionNoAction = WampCollection.extend({
+    url: "noAction"
+  });
+
   _.each(
-    [Model, Collection, CollectionUri, CollectionAuth],
+    [Model, Collection, CollectionUri, CollectionAuth, CollectionNoAction],
     function (Klass) {
       obj[Klass] = new Klass();
     }
