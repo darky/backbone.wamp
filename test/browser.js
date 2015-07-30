@@ -111,16 +111,16 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
   });
 
   it("wampOtherId property", function (done) {
-    var m, M;
-    M = Model.extend({
+    var c, C;
+    C = Collection.extend({
       wampOtherId: "nodejs2",
-      urlRoot: "testModel2"
+      url: "qweqwe"
     });
-    m = new M();
-    m.fetch({
-      error: function (mod, err, opts) {
-        chai.expect(opts.wampOtherId)
-        .equal("nodejs2");
+    c = new C();
+    c.fetch({
+      success: function () {
+        chai.expect(c.at(0).get("ok"))
+        .equal(true);
         done();
       }
     });
@@ -161,10 +161,8 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
   });
 
   it("model create", function (done) {
-    model.once("sync", function (m, resp, opts) {
+    model.once("sync", function (m) {
       chai.expect(!!m.id).equal(true);
-      chai.expect(opts.wampMyId)
-      .equal("browser");
       done();
     });
     model.save({a: 1});
@@ -175,7 +173,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       chai.expect(m.get("a")).equal(2);
       chai.expect(m.get("type")).equal("update");
       chai.expect(!!opts.wampModelId).equal(true);
-      chai.expect(opts.wampMyId).equal("browser");
       done();
     });
     model.save({a: 2});
@@ -186,7 +183,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       chai.expect(m.get("b")).equal(6);
       chai.expect(m.get("type")).equal("patch");
       chai.expect(!!opts.wampModelId).equal(true);
-      chai.expect(opts.wampMyId).equal("browser");
       chai.expect(opts.patch).equal(true);
       done();
     });
@@ -201,7 +197,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     var data = model.toJSON();
     model.once("sync", function (m, resp, opts) {
       chai.expect(!!opts.wampModelId).equal(true);
-      chai.expect(opts.wampMyId).equal("browser");
       chai.expect(data).deep.equal(resp);
       done();
     });
@@ -211,8 +206,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
   it("model destroy", function (done) {
     model.once("destroy", function (m, resp, opts) {
       chai.expect(!!opts.wampModelId).equal(true);
-      chai.expect(opts.wampMyId)
-      .equal("browser");
       chai.expect(_.size(resp))
       .equal(0);
       done();
@@ -234,7 +227,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       chai.expect(collection.at(0).get("b")).equal(1);
       chai.expect(collection.at(0).get("type")).equal("update");
       chai.expect(!!opts.wampModelId).equal(true);
-      chai.expect(opts.wampMyId).equal("browser");
       done();
     });
     collection.at(0).save({b: 1});
@@ -246,7 +238,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       chai.expect(collection.at(0).get("type")).equal("patch");
       chai.expect(opts.patch).equal(true);
       chai.expect(!!opts.wampModelId).equal(true);
-      chai.expect(opts.wampMyId).equal("browser");
       done();
     });
     collection.at(0).save({
@@ -260,7 +251,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     var data = collection.at(0).toJSON();
     collection.once("sync", function (c, resp, opts) {
       chai.expect(!!opts.wampModelId).equal(true);
-      chai.expect(opts.wampMyId).equal("browser");
       chai.expect(data).deep.equal(resp);
       done();
     });
@@ -269,8 +259,7 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
 
   it("collection fetch", function (done) {
     var data = collection.toJSON();
-    collection.once("sync", function (c, resp, opts) {
-      chai.expect(opts.wampMyId).equal("browser");
+    collection.once("sync", function (c, resp) {
       chai.expect(data).deep.equal(resp);
       done();
     });
@@ -280,7 +269,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
   it("collection model destroy", function (done) {
     collection.once("destroy", function (c, resp, opts) {
       chai.expect(!!opts.wampModelId).equal(true);
-      chai.expect(opts.wampMyId).equal("browser");
       chai.expect(collection.length).equal(0);
       done();
     });
