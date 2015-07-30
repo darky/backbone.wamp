@@ -11,8 +11,7 @@ var _ = require("underscore"),
   combineCoverage = require("istanbul-combine"),
   eslint = require("gulp-eslint"),
   exec = require("child_process").exec,
-  KarmaServer = require("karma").Server,
-  ps = require("ps-node");
+  KarmaServer = require("karma").Server;
 
 
 /* ******************
@@ -89,10 +88,8 @@ gulp.task("test-own", function (cb) {
       reporters: ["progress", "coverage"],
       singleRun: true
     }, function () {
-      ps.lookup({
-        arguments: "--6o56y45f36wmf7f"
-      }, function (err, processes) {
-        process.kill(parseInt(processes[0].pid, 10), "SIGINT");
+      exec("ps -e | grep istanbul | sed \\$d | awk '{print $1}'", function (err, pid) {
+        process.kill(parseInt(pid.trim(), 10), "SIGINT");
         crossbarProcess.kill();
         cb(err);
       });
