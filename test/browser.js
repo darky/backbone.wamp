@@ -110,6 +110,21 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     }, 1500);
   });
 
+  it("wampMyId collection property", function (done) {
+    var c, C;
+    C = Collection.extend({
+      model: Model,
+      wampMyId: "browser"
+    });
+    c = new C();
+    c.add([{a: 1}]);
+    c.at(0).fetch({
+      success: function () {
+        done();
+      }
+    });
+  });
+
   it("wampOtherId property", function (done) {
     var c, C;
     C = Collection.extend({
@@ -119,8 +134,22 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     c = new C();
     c.fetch({
       success: function () {
-        chai.expect(c.at(0).get("ok"))
-        .equal(true);
+        chai.expect(c.at(0).get("ok")).equal(true);
+        done();
+      }
+    });
+  });
+
+  it("wampOtherId collection property", function (done) {
+    var c, C;
+    C = Collection.extend({
+      wampOtherId: "nodejs2",
+      url: "qweqwe"
+    });
+    c = new C();
+    c.add([{}]);
+    c.at(0).fetch({
+      success: function () {
         done();
       }
     });
@@ -443,7 +472,7 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       error: function () {
         done();
       }
-    })
+    });
   });
 
   it("check AMD", function (done) {
