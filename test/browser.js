@@ -434,6 +434,18 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     });
   });
 
+  it("Not defined procedure", function (done) {
+    var C = Collection.extend({
+      url: "notExist"
+    }),
+      c = new C();
+    c.fetch({
+      error: function () {
+        done();
+      }
+    })
+  });
+
   it("check AMD", function (done) {
     requirejs.config({
       paths: {

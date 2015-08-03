@@ -131,8 +131,7 @@
           },
           sync: function (method, model, options) {
             return Backbone.Model.prototype.sync.call(this, method, model, _.extend(
-              options || {},
-              {wampEntity: model, wampModelId: model.id}
+              options, {wampEntity: model, wampModelId: model.id}
             ));
           }
         }),
@@ -145,7 +144,7 @@
           model: WampModel,
           sync: function (method, collection, options) {
             return Backbone.Collection.prototype.sync.call(this, method, collection,
-              _.extend(options || {}, {wampEntity: collection})
+              _.extend(options, {wampEntity: collection})
             );
           }
         });
