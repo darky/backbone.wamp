@@ -88,7 +88,7 @@ gulp.task("test-own", function (cb) {
       reporters: ["progress", "coverage"],
       singleRun: true
     }, function () {
-      exec("ps -e | grep istanbul | sed \\$d | awk '{print $1}'", function (err, pid) {
+      exec("ps -fe | grep [i]stanbul | awk '{print $2}'", function (err, pid) {
         process.kill(parseInt(pid.trim(), 10), "SIGINT");
         crossbarProcess.kill();
         cb(err);
