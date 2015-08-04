@@ -61,7 +61,7 @@ gulp.task("test-backbone", function (cb) {
 });
 
 gulp.task("test-own", function (cb) {
-  var crossbarProcess = exec("crossbar start");
+  exec("crossbar start", {timeout: 45000});
   _.delay(function () {
     new KarmaServer({
       browsers: ["Firefox"],
@@ -88,13 +88,14 @@ gulp.task("test-own", function (cb) {
       reporters: ["progress", "coverage"],
       singleRun: true
     }, function () {
-      exec("ps -fe | grep [i]stanbul | awk '{print $2}'",
+      exec(
+        "ps -fe | grep [i]stanbul | awk '{print $2}'",
         {timeout: 10000},
         function (err, pid) {
           process.kill(parseInt(pid.trim(), 10), "SIGINT");
-          crossbarProcess.kill();
           cb(err);
-        });
+        }
+      );
     }).start();
   }, 10000);
 });
