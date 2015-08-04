@@ -13,7 +13,7 @@
         GET: "read"
       },
 
-        actions = _.values(actionMap),
+        crudActions = _.values(actionMap),
 
         capsFirstLetter = function (string) {
           return string.charAt(0).toUpperCase() + string.slice(1);
@@ -70,6 +70,8 @@
           };
         },
 
+        registersStorage = {},
+
         attachHandlers = function (uriKey) {
           var self = this,
             uri = _.result(this, uriKey),
@@ -78,9 +80,10 @@
           if (!uri || !wampMyId) {
             return;
           }
-          _.each(actions, function (action) {
+          _.each(crudActions, function (action) {
+            var uriPerAction = getWampUri(self)(uri, wampMyId, action);
             connection.session.register(
-              getWampUri(self)(uri, wampMyId, action),
+              uriPerAction,
               function (args, kwargs, details) {
                 var defer = connection.defer();
                 getWampAuth(self)({
@@ -112,7 +115,29 @@
                 });
                 return getPromise(defer);
               }
-            );
+            ).then(function (reg) {
+              registersStorage[uriPerAction] = reg;
+            });
+          });
+        },
+
+        wampUnregister = function (uriKey, actions, cb) {
+          var self = this,
+            uri = _.result(this, uriKey),
+            wampMyId = getWampMyId(this);
+          if (actions == null) {
+            actions = crudActions;
+          }
+          _.each(actions, function (action) {
+            var uriPerAction = getWampUri(self)(uri, wampMyId, action);
+            getWampConnection(self).session.unregister(
+              registersStorage[uriPerAction]
+            ).then(function () {
+              registersStorage[uriPerAction] = null;
+              cb(null, uriPerAction);
+            }, function (err) {
+              cb(err, uriPerAction);
+            });
           });
         },
 
@@ -133,7 +158,8 @@
             return Backbone.Model.prototype.sync.call(this, method, model, _.extend(
               options, {wampEntity: model, wampModelId: model.id}
             ));
-          }
+          },
+          wampUnregister: _.partial(wampUnregister, "urlRoot")
         }),
 
         WampCollection = Backbone.Collection.extend({
@@ -151,7 +177,8 @@
             return Backbone.Collection.prototype.sync.call(this, method, collection,
               _.extend(options, {wampEntity: collection})
             );
-          }
+          },
+          wampUnregister: _.partial(wampUnregister, "url")
         });
 
 

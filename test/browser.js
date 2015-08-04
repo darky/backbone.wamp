@@ -71,6 +71,23 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     .equal(10);
   });
 
+  it("wampUnregister method", function (done) {
+    var Col = Collection.extend({
+      url: "qweqwe"
+    }),
+      col = new Col(),
+      tryDone = _.after(7, function () {
+        chai.expect(global.WAMP_CONNECTION.session.registrations.length)
+        .equal(10);
+        done();
+      });
+    this.timeout(4000);
+    _.delay(function () {
+      col.wampUnregister(["read", "create"], tryDone);
+      col.wampUnregister(null, tryDone);
+    }, 2000);
+  });
+
   it("wampConnection property", function (done) {
     var connection = new autobahn.Connection({
       realm: "realm2",
