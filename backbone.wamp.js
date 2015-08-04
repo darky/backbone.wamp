@@ -53,10 +53,7 @@
 
         getWampAuth = function (object) {
           return object.wampAuth || globalVar.WAMP_AUTH || function () {
-            var connection = getWampConnection(object),
-              defer = connection.defer();
-            defer.resolve(true);
-            return getPromise(defer);
+            return true;
           };
         },
 
@@ -85,15 +82,18 @@
             connection.session.register(
               uriPerAction,
               function (args, kwargs, details) {
-                var defer = connection.defer();
-                getWampAuth(self)({
-                    action: action,
-                    uri: uri,
-                    wampMyId: wampMyId
-                  },
-                  kwargs, details
-                )
-                .then(function (isAuth) {
+                var defer = connection.defer(),
+                  authDefer = connection.defer();
+                authDefer.resolve(
+                  getWampAuth(self)({
+                      action: action,
+                      uri: uri,
+                      wampMyId: wampMyId
+                    },
+                    kwargs, details
+                  )
+                );
+                getPromise(authDefer).then(function (isAuth) {
                   if (isAuth === true) {
                     try {
                       kwargs.data = JSON.parse(kwargs.data);
