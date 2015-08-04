@@ -9,7 +9,6 @@
     "complexity": [2, 7],
     "consistent-return": 2,
     "curly": [2, "all"],
-    "default-case": 2,
     "dot-notation": [2, {"allowKeywords": true, "allowPattern": ""}],
     "dot-location": [2, "property"],
     "eqeqeq": [2, "allow-null"],
