@@ -88,11 +88,13 @@ gulp.task("test-own", function (cb) {
       reporters: ["progress", "coverage"],
       singleRun: true
     }, function () {
-      exec("ps -fe | grep [i]stanbul | awk '{print $2}'", function (err, pid) {
-        process.kill(parseInt(pid.trim(), 10), "SIGINT");
-        crossbarProcess.kill();
-        cb(err);
-      });
+      exec("ps -fe | grep [i]stanbul | awk '{print $2}'",
+        {timeout: 10000},
+        function (err, pid) {
+          process.kill(parseInt(pid.trim(), 10), "SIGINT");
+          crossbarProcess.kill();
+          cb(err);
+        });
     }).start();
   }, 10000);
 });
