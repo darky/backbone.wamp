@@ -21,10 +21,10 @@
   },
   "devDependencies": {
     "gulp"                   : "3.9.0",
-    "gulp-eslint"            : "0.15.0",
+    "gulp-eslint"            : "1.0.0",
     "istanbul"               : "0.3.17",
     "istanbul-combine"       : "0.3.0",
-    "karma"                  : "0.13.3",
+    "karma"                  : "0.13.4",
     "karma-chai"             : "0.1.0",
     "karma-coverage"         : "0.4.2",
     "karma-firefox-launcher" : "0.1.6",
