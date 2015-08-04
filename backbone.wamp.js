@@ -69,7 +69,7 @@
 
         registersStorage = {},
 
-        attachHandlers = function (uriKey) {
+        attachHandlers = function (uriKey, registerCb) {
           var self = this,
             uri = _.result(this, uriKey),
             wampMyId = getWampMyId(this),
@@ -117,7 +117,8 @@
               }
             ).then(function (reg) {
               registersStorage[uriPerAction] = reg;
-            });
+              registerCb(reg);
+            }, registerCb);
           });
         },
 
@@ -151,7 +152,9 @@
             }
             Backbone.Model.call(this, attributes, options);
             if (!options.collection && !options.wampNoAttach) {
-              attachHandlers.call(this, "urlRoot");
+              attachHandlers.call(
+                this, "urlRoot", options.wampRegister || function () {}
+              );
             }
           },
           sync: function (method, model, options) {
@@ -169,7 +172,9 @@
             }
             Backbone.Collection.call(this, models, options);
             if (!options.wampNoAttach) {
-              attachHandlers.call(this, "url");
+              attachHandlers.call(
+                this, "url", options.wampRegister || function () {}
+              );
             }
           },
           model: WampModel,

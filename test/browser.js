@@ -8,7 +8,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     Model, Collection, model, collection;
 
   before(function (done) {
-    this.timeout(10000);
     global.WAMP_MY_ID = "browser";
     global.WAMP_OTHER_ID = "nodejs";
     global.WAMP_CONNECTION = new autobahn.Connection({
@@ -22,11 +21,17 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       Collection = Backbone.WampCollection.extend({
         url: "testCollection"
       });
-      model = new Model();
-      collection = new Collection();
-      _.delay(done, 2000);
+      done();
     };
     global.WAMP_CONNECTION.open();
+  });
+
+  it("wampRegisterCb option", function (done) {
+    var tryDone = _.after(10, function () {
+      done();
+    });
+    model = new Model({}, {wampRegister: tryDone});
+    collection = new Collection([], {wampRegister: tryDone});
   });
 
   it("Native backbone.ajax", function (done) {
