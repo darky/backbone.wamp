@@ -19,8 +19,8 @@ var _ = require("underscore"),
 # **************** */
 gulp.task("default", ["coverage", "lint"]);
 gulp.task("test", [
-    "test-backbone",
-    "test-own"
+  "test-backbone",
+  "test-own"
 ]);
 
 

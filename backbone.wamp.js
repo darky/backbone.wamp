@@ -15,7 +15,7 @@
 
         actions = _.values(actionMap),
 
-        capitalizeFirstLetter = function (string) {
+        capsFirstLetter = function (string) {
           return string.charAt(0).toUpperCase() + string.slice(1);
         },
 
@@ -95,9 +95,9 @@
                     try {
                       kwargs.data = JSON.parse(kwargs.data);
                     } catch (e) {} // eslint-disable-line
-                    if (_.isFunction(self["wamp" + capitalizeFirstLetter(action)])) {
+                    if (_.isFunction(self["wamp" + capsFirstLetter(action)])) {
                       defer.resolve(
-                        self["wamp" + capitalizeFirstLetter(action)](
+                        self["wamp" + capsFirstLetter(action)](
                           kwargs, details
                         )
                       );

@@ -76,32 +76,32 @@ global.WAMP_CONNECTION.onopen = function () {
           extra = options.extra,
           self = this;
         switch (true) {
-          case extra.checkSuccessPromise:
-            deferred = global.WAMP_CONNECTION.defer();
-            _.defer(function () {
-              self.add(_.extend(data, {
-                id: parseInt(_.uniqueId(), 10),
-                wampExtra: extra.checkIt,
-                wampOptions: !!details.progress
-              }));
-              deferred.resolve(self.last().toJSON());
-            });
-            return deferred.promise;
-          case extra.checkError:
-            return new autobahn.Error("sync error");
-          case extra.checkErrorPromise:
-            deferred = global.WAMP_CONNECTION.defer();
-            _.defer(function () {
-              deferred.resolve(new autobahn.Error("promise error"));
-            });
-            return deferred.promise;
-          default:
+        case extra.checkSuccessPromise:
+          deferred = global.WAMP_CONNECTION.defer();
+          _.defer(function () {
             self.add(_.extend(data, {
               id: parseInt(_.uniqueId(), 10),
               wampExtra: extra.checkIt,
               wampOptions: !!details.progress
             }));
-            return this.last().toJSON();
+            deferred.resolve(self.last().toJSON());
+          });
+          return deferred.promise;
+        case extra.checkError:
+          return new autobahn.Error("sync error");
+        case extra.checkErrorPromise:
+          deferred = global.WAMP_CONNECTION.defer();
+          _.defer(function () {
+            deferred.resolve(new autobahn.Error("promise error"));
+          });
+          return deferred.promise;
+        default:
+          self.add(_.extend(data, {
+            id: parseInt(_.uniqueId(), 10),
+            wampExtra: extra.checkIt,
+            wampOptions: !!details.progress
+          }));
+          return this.last().toJSON();
         }
       },
       wampUpdate: function (options) {

@@ -175,7 +175,8 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
   it("global WAMP_GET_URI", function (done) {
     var C = Collection.extend({
       url: "qweqwe"
-    }), c;
+    }),
+      c;
     global.WAMP_GET_URI = function (uri, peerId, action) {
       return "customUri." + action;
     };
@@ -478,10 +479,10 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
   it("check AMD", function (done) {
     requirejs.config({
       paths: {
-        "autobahn": "base/bower_components/autobahn/autobahn",
-        "backbone": "base/bower_components/backbone/backbone",
-        "jquery": "base/bower_components/jquery/dist/jquery",
-        "underscore": "base/bower_components/underscore/underscore"
+        autobahn: "base/bower_components/autobahn/autobahn",
+        backbone: "base/bower_components/backbone/backbone",
+        jquery: "base/bower_components/jquery/dist/jquery",
+        underscore: "base/bower_components/underscore/underscore"
       }
     });
 
