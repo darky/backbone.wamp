@@ -65,6 +65,12 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     }, 1900);
   });
 
+  it("Ignore register CRUD hooks", function () {
+    var col = new Collection([], {wampNoAttach: true});
+    chai.expect(global.WAMP_CONNECTION.session.registrations.length)
+    .equal(10);
+  });
+
   it("wampConnection property", function (done) {
     var connection = new autobahn.Connection({
       realm: "realm2",

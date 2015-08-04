@@ -125,7 +125,7 @@
               options = {};
             }
             Backbone.Model.call(this, attributes, options);
-            if (!options.collection) {
+            if (!options.collection && !options.wampNoAttach) {
               attachHandlers.call(this, "urlRoot");
             }
           },
@@ -137,9 +137,14 @@
         }),
 
         WampCollection = Backbone.Collection.extend({
-          constructor: function () {
-            Backbone.Collection.apply(this, arguments);
-            attachHandlers.call(this, "url");
+          constructor: function (models, options) {
+            if (options == null) {
+              options = {};
+            }
+            Backbone.Collection.call(this, models, options);
+            if (!options.wampNoAttach) {
+              attachHandlers.call(this, "url");
+            }
           },
           model: WampModel,
           sync: function (method, collection, options) {
