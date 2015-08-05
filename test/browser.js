@@ -130,7 +130,7 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
       chai.expect(_.filter(
         global.WAMP_CONNECTION.session.registrations,
         function (reg) {
-          return !!reg.procedure.match(/^testModel\.browser2/);
+          return !!reg.procedure.match(/^browser2\.testModel/);
         }
       ).length)
       .equal(5);

@@ -62,7 +62,7 @@
             if (globalVar.WAMP_GET_URI) {
               return globalVar.WAMP_GET_URI.apply(object, arguments);
             } else {
-              return uri + "." + peerId + "." + action;
+              return peerId + "." + uri + "." + action;
             }
           };
         },
