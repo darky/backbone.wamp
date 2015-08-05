@@ -28,7 +28,7 @@
         },
 
         getWampConnection = function (object) {
-          return object.wampConnection || globalVar.WAMP_CONNECTION;
+          return _.result(object, "wampConnection") || globalVar.WAMP_CONNECTION;
         },
 
         getWampMyId = function (object) {
