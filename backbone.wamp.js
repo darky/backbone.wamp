@@ -58,7 +58,7 @@
         },
 
         getWampUri = function (object) {
-          return object.wampGetUri || function (uri, peerId, action) {
+          return object.wampGetUri || function (peerId, uri, action) {
             if (globalVar.WAMP_GET_URI) {
               return globalVar.WAMP_GET_URI.apply(object, arguments);
             } else {
@@ -78,7 +78,7 @@
             return;
           }
           _.each(crudActions, function (action) {
-            var uriPerAction = getWampUri(self)(uri, wampMyId, action);
+            var uriPerAction = getWampUri(self)(wampMyId, uri, action);
             connection.session.register(
               uriPerAction,
               function (args, kwargs, details) {
@@ -130,7 +130,7 @@
             actions = crudActions;
           }
           _.each(actions, function (action) {
-            var uriPerAction = getWampUri(self)(uri, wampMyId, action);
+            var uriPerAction = getWampUri(self)(wampMyId, uri, action);
             getWampConnection(self).session.unregister(
               registersStorage[uriPerAction]
             ).then(function () {
@@ -199,8 +199,8 @@
         defer = connection.defer();
         connection.session.call(
           getWampUri(ajaxOptions.wampEntity)(
-            uri,
             getWampOtherId(ajaxOptions.wampEntity),
+            uri,
             actionMap[ajaxOptions.type]
           ),
           [],
