@@ -213,8 +213,7 @@
                 wampMyId: getWampMyId(ajaxOptions.wampEntity)
               }
             )
-          },
-          ajaxOptions.wampOptions
+          }
         )
         .then(function (obj) {
           if (obj.error) {

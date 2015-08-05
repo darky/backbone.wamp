@@ -345,18 +345,6 @@ describe("backbone.wamp tests", function () { // eslint-disable-line
     });
   });
 
-  it("wampOptions", function (done) {
-    collection.once("sync", function () {
-      chai.expect(collection.last().get("wampOptions")).equal(true);
-      done();
-    });
-    collection.create({a: 1}, {
-      wampOptions: {
-        receive_progress: true // eslint-disable-line
-      }
-    });
-  });
-
   it("success callback", function (done) {
     collection.create({a: 1}, {
       success: function () {

@@ -81,8 +81,7 @@ global.WAMP_CONNECTION.onopen = function () {
           _.defer(function () {
             self.add(_.extend(data, {
               id: parseInt(_.uniqueId(), 10),
-              wampExtra: extra.checkIt,
-              wampOptions: !!details.progress
+              wampExtra: extra.checkIt
             }));
             deferred.resolve(self.last().toJSON());
           });
@@ -98,8 +97,7 @@ global.WAMP_CONNECTION.onopen = function () {
         default:
           self.add(_.extend(data, {
             id: parseInt(_.uniqueId(), 10),
-            wampExtra: extra.checkIt,
-            wampOptions: !!details.progress
+            wampExtra: extra.checkIt
           }));
           return this.last().toJSON();
         }
