@@ -81,7 +81,7 @@
             var uriPerAction = getWampUri(self)(wampMyId, uri, action);
             connection.session.register(
               uriPerAction,
-              function (args, kwargs, details) {
+              function (args, kwargs) {
                 var defer = connection.defer(),
                   authDefer = connection.defer();
                 authDefer.resolve(
@@ -90,7 +90,7 @@
                       uri: uri,
                       wampMyId: wampMyId
                     },
-                    kwargs, details
+                    kwargs
                   )
                 );
                 getPromise(authDefer).then(function (isAuth) {
@@ -100,9 +100,7 @@
                     } catch (e) {} // eslint-disable-line
                     if (_.isFunction(self["wamp" + capsFirstLetter(action)])) {
                       defer.resolve(
-                        self["wamp" + capsFirstLetter(action)](
-                          kwargs, details
-                        )
+                        self["wamp" + capsFirstLetter(action)](kwargs)
                       );
                     } else {
                       defer.resolve(
